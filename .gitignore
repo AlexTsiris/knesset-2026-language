@@ -1,0 +1,15 @@
+config/accounts.txt
+config/accounts.db
+data/raw/*.jsonl
+data/processed/*
+outputs/*
+__pycache__/
+*.pyc
+.venv/
+config/cookies/
+
+# но сохраняем сами каталоги
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!outputs/.gitkeep
+!config/cookies/.gitkeep

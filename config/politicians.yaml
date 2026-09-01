@@ -1,0 +1,168 @@
+# Лидеры партий, идущих на выборы 27.10.2026.
+# ВАЖНО: handle требует проверки скриптом `python -m src.collect.verify_handles`
+#   verified: false  -> хэндл взят по памяти/косвенно, надо подтвердить
+#   handle: null     -> аккаунт не найден / политик не ведёт X
+#
+# aliases -- как этого политика называют ДРУГИЕ (для графа упоминаний и
+# подсчёта "кто про кого"). Иврит + англ + разговорные формы.
+
+politicians:
+  - id: netanyahu
+    name_ru: "Биньямин Нетаниягу"
+    name_he: "בנימין נתניהו"
+    party: "Likud"
+    party_he: "הליכוד"
+    bloc: "right_coalition"
+    handle: "netanyahu"
+    verified: true
+    aliases: ["נתניהו", "ביבי", "ראש הממשלה", "Netanyahu", "Bibi", "@netanyahu"]
+
+  - id: bennett
+    name_ru: "Нафтали Беннет"
+    name_he: "נפתלי בנט"
+    party: "Beyachad (Bennett + Yesh Atid)"
+    party_he: "ביחד"
+    bloc: "change_bloc"
+    handle: "naftalibennett"
+    verified: true
+    aliases: ["בנט", "נפתלי בנט", "Bennett", "@naftalibennett"]
+
+  - id: lapid
+    name_ru: "Яир Лапид"
+    name_he: "יאיר לפיד"
+    party: "Beyachad (Yesh Atid)"
+    party_he: "ביחד / יש עתיד"
+    bloc: "change_bloc"
+    handle: "yairlapid"
+    verified: true
+    aliases: ["לפיד", "יאיר לפיד", "Lapid", "@yairlapid"]
+
+  - id: lieberman
+    name_ru: "Авигдор Либерман"
+    name_he: "אביגדור ליברמן"
+    party: "Yisrael Beiteinu"
+    party_he: "ישראל ביתנו"
+    bloc: "change_bloc"
+    handle: "AvigdorLiberman"
+    verified: true
+    aliases: ["ליברמן", "Lieberman", "Liberman", "@AvigdorLiberman"]
+
+  - id: golan
+    name_ru: "Яир Голан"
+    name_he: "יאיר גולן"
+    party: "The Democrats"
+    party_he: "הדמוקרטים"
+    bloc: "change_bloc"
+    handle: "YairGolan1"
+    verified: true
+    aliases: ["גולן", "יאיר גולן", "Golan", "@YairGolan1"]
+
+  - id: smotrich
+    name_ru: "Бецалель Смотрич"
+    name_he: "בצלאל סמוטריץ'"
+    party: "Religious Zionist Party (+ Zehut)"
+    party_he: "הציונות הדתית"
+    bloc: "right_coalition"
+    handle: "bezalelsm"
+    verified: true
+    aliases: ["סמוטריץ", "סמוטריץ'", "בצלאל סמוטריץ'", "Smotrich", "@bezalelsm"]
+
+  - id: ben_gvir
+    name_ru: "Итамар Бен-Гвир"
+    name_he: "איתמר בן גביר"
+    party: "Otzma Yehudit"
+    party_he: "עוצמה יהודית"
+    bloc: "right_coalition"
+    handle: "itamarbengvir"
+    verified: true
+    aliases: ["בן גביר", "איתמר בן גביר", "Ben Gvir", "Ben-Gvir", "@itamarbengvir"]
+
+  - id: deri
+    name_ru: "Арье Дери"
+    name_he: "אריה דרעי"
+    party: "Shas"
+    party_he: "ש\"ס"
+    bloc: "right_coalition"
+    handle: null
+    verified: false
+    aliases: ["דרעי", "אריה דרעי", "Deri", "Deri"]
+
+  - id: goldknopf
+    name_ru: "Ицхак Гольдкнопф"
+    name_he: "יצחק גולדקנופף"
+    party: "United Torah Judaism / Agudat Yisrael"
+    party_he: "יהדות התורה"
+    bloc: "right_coalition"
+    handle: null
+    verified: false
+    aliases: ["גולדקנופף", "Goldknopf"]
+
+  - id: gafni
+    name_ru: "Моше Гафни"
+    name_he: "משה גפני"
+    party: "United Torah Judaism / Degel HaTorah"
+    party_he: "יהדות התורה / דגל התורה"
+    bloc: "right_coalition"
+    handle: null
+    verified: false
+    aliases: ["גפני", "משה גפני", "Gafni"]
+
+  - id: abbas
+    name_ru: "Мансур Аббас"
+    name_he: "מנסור עבאס"
+    party: "Ra'am (United Arab List)"
+    party_he: "רע\"ם"
+    bloc: "arab"
+    handle: "mnsorabbas"
+    verified: true
+    aliases: ["עבאס", "מנסור עבאס", "Mansour Abbas", "منصور عباس"]
+
+  - id: jabareen
+    name_ru: "Юсеф Джабарин"
+    name_he: "יוסף ג'בארין"
+    party: "Joint List (Hadash-Ta'al-Balad)"
+    party_he: "הרשימה המשותפת"
+    bloc: "arab"
+    handle: null
+    verified: false
+    aliases: ["ג'בארין", "Jabareen", "يوسف جبارين"]
+
+  - id: tibi
+    name_ru: "Ахмад Тиби"
+    name_he: "אחמד טיבי"
+    party: "Joint List (Ta'al)"
+    party_he: "הרשימה המשותפת / תע\"ל"
+    bloc: "arab"
+    handle: "Ahmad_tibi"
+    verified: true
+    aliases: ["טיבי", "אחמד טיבי", "Tibi", "أحمد الطيبي"]
+
+  - id: maoz
+    name_ru: "Ави Маоз"
+    name_he: "אבי מעוז"
+    party: "Noam"
+    party_he: "נעם"
+    bloc: "right_coalition"
+    handle: "avi_maoz"
+    verified: true
+    aliases: ["מעוז", "אבי מעוז", "Maoz"]
+
+  - id: winter
+    name_ru: "Офер Винтер"
+    name_he: "עופר וינטר"
+    party: "Amcha Yisrael"
+    party_he: "עמך ישראל"
+    bloc: "right_new"
+    handle: null
+    verified: false
+    aliases: ["וינטר", "עופר וינטר", "Winter"]
+
+  - id: haskel
+    name_ru: "Шарен Хаскель"
+    name_he: "שרן השכל"
+    party: "Israel First"
+    party_he: "ישראל ראשונה"
+    bloc: "right_new"
+    handle: "sharrenhaskel"
+    verified: true
+    aliases: ["השכל", "שרן השכל", "Haskel"]
