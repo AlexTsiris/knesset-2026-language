@@ -51,6 +51,41 @@ def dedupe(rows: list[dict]) -> list[dict]:
     return out
 
 
+def reclassify_and_filter(rows: list[dict]) -> tuple[list[dict], dict]:
+    """Две чистки, критичные для корректности текстовых метрик:
+
+    1. Чужой автор -> это ретвит. Флаг include:nativeretweets притащил в
+       выгрузку нативные ретвиты, а поле retweetedTweet их не пометило:
+       X показывает их как оригинал чужого автора. Такой твит с
+       is_retweet=false молча попадал в «собственные» слова политика и
+       засорял n-граммы/keyness ЧУЖИМ текстом. Помечаем is_retweet=true:
+       в активности учтётся, из текстовых метрик уйдёт.
+
+    2. Вне окна кампании -> выбрасываем. since:/until: на стороне X не
+       абсолютны (закреплённые/старые твиты просачиваются). Дата -- истина.
+    """
+    handle_by_id = {p.id: (p.handle or "").lower() for p in CFG.politicians}
+    start = CFG.campaign.start.isoformat()
+    end = CFG.campaign.end.isoformat()
+
+    kept: list[dict] = []
+    stats = {"reclassified_retweet": 0, "dropped_out_of_window": 0}
+    for r in rows:
+        d = (r.get("date") or "")[:10]
+        if not (start <= d <= end):
+            stats["dropped_out_of_window"] += 1
+            continue
+        want = handle_by_id.get(r.get("politician_id"), "")
+        author = (r.get("author_handle") or "").lower()
+        if want and author and author != want and not r.get("is_retweet"):
+            r["is_retweet"] = True
+            r["retweet_of"] = r.get("retweet_of") or r.get("author_handle")
+            r["_reclassified_native_rt"] = True
+            stats["reclassified_retweet"] += 1
+        kept.append(r)
+    return kept, stats
+
+
 def enrich(rows: list[dict], backend: str) -> list[dict]:
     # чистка и язык -- дёшево, делаем сразу
     for r in rows:
@@ -105,6 +140,11 @@ def main() -> None:
     rows = dedupe(rows)
     print(f"[prepare] загружено {before}, после дедупликации {len(rows)}")
 
+    rows, clean_stats = reclassify_and_filter(rows)
+    print(f"[prepare] нативных ретвитов переклассифицировано: "
+          f"{clean_stats['reclassified_retweet']}; вне окна отброшено: "
+          f"{clean_stats['dropped_out_of_window']}; осталось {len(rows)}")
+
     rows = enrich(rows, backend)
 
     with open(OUT, "w", encoding="utf-8") as fh:
@@ -116,6 +156,8 @@ def main() -> None:
         "lemmatizer_used": backend,
         "n_tweets": len(rows),
         "synthetic": any(r.get("_synthetic") for r in rows),
+        "native_retweets_reclassified": clean_stats["reclassified_retweet"],
+        "dropped_out_of_window": clean_stats["dropped_out_of_window"],
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     by_lang: dict[str, int] = {}

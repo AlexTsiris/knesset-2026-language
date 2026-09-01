@@ -151,6 +151,11 @@ svg .spark { fill: none; stroke: var(--s1); stroke-width: 2;
 E = html.escape
 
 
+def sp(n: int) -> str:
+    """Число с пробелами-разделителями тысяч: 12345 -> '12 345'."""
+    return f"{n:,}".replace(",", " ")
+
+
 def he(text: str) -> str:
     """Ивритская строка в LTR-документе: изолируем направление, иначе
     пунктуация и цифры прыгают в начало строки."""
@@ -510,16 +515,104 @@ def build(d: dict) -> str:
         A("</div></div>")
     A("</div>")
 
+    # ---------- разнообразие словаря и сфокусированность ----------
+    A("<h2>Словарь: богатство и фокус</h2>")
+    A('<p class="hint">Слева — лексическое разнообразие (доля уникальных слов; '
+      'честно сравнивать при близком объёме, поэтому объём рядом). Справа — '
+      'сфокусированность на одной теме (индекс концентрации HHI по темам: '
+      'выше = политик одной темы).</p>')
+    A('<div class="grid2">')
+    A('<div class="card"><h3>Разнообразие словаря (TTR)</h3>')
+    ld = [(nm(p), pols[p].get("lexical_diversity", {})) for p in order]
+    ld = [(n, x) for n, x in ld if x.get("total", 0) >= 50]
+    mx = max((x["ttr"] for _n, x in ld), default=1) or 1
+    A(bar_rows([(f'{n}', x["ttr"] / mx, f'{x["ttr"]:.2f} ({x["total"]} сл.)')
+                for n, x in sorted(ld, key=lambda t: -t[1]["ttr"])], "var(--s3)"))
+    A("</div>")
+    A('<div class="card"><h3>Сфокусированность на теме (HHI)</h3>')
+    tc = [(nm(p), pols[p].get("topic_concentration", {})) for p in order]
+    tc = [(n, x) for n, x in tc if x.get("hhi")]
+    mx = max((x["hhi"] for _n, x in tc), default=1) or 1
+    topic_short = {k: v.get("short", v["ru"]) for k, v in CFG.topics.items()}
+    A(bar_rows([(f'{n}', x["hhi"] / mx,
+                 f'{x["hhi"]:.2f} · {topic_short.get(x["top_topic"], "")}')
+                for n, x in sorted(tc, key=lambda t: -t[1]["hhi"])], "var(--s2)"))
+    A("</div></div>")
+
+    # ---------- самые заметные твиты ----------
+    A("<h2>Самые заметные твиты</h2>")
+    A('<p class="hint">Собственный твит каждого политика с максимумом лайков. '
+      'Одна точка для иллюстрации — не характеризует средний тон.</p>')
+    A('<div class="grid2">')
+    for p in sorted(order, key=lambda x: -(pols[x].get("viral_tweet") or {}).get("likes", 0)):
+        vt = pols[p].get("viral_tweet")
+        if not vt or not vt.get("text"):
+            continue
+        txt = vt["text"]
+        cls = "he" if vt.get("lang") == "he" else ""
+        views_txt = f' · {sp(vt["views"])} просмотров' if vt.get("views") else ""
+        A(f'<div class="card"><h3>{E(nm(p))} '
+          f'<span style="color:var(--ink-muted);font-weight:400">'
+          f'❤ {sp(vt["likes"])}</span></h3>'
+          f'<div class="{cls}" style="font-size:13.5px;line-height:1.5">'
+          f'{E(txt[:280])}</div>'
+          f'<div style="color:var(--ink-muted);font-size:11.5px;margin-top:8px">'
+          f'{E((vt.get("date") or "")[:10])} · '
+          f'{vt.get("retweets", 0)} ретвитов{views_txt}</div></div>')
+    A("</div>")
+
+    # ---------- методология ----------
+    render_methodology(A, meta.get("methodology"))
+
     A(f'<footer>Собрано {E(meta["generated_at"])}. '
       f'Лемматизация: {E(meta["lemmatizer"])}. '
+      f'Корпус: {meta["n_tweets_total"]} твитов, {meta["n_politicians"]} политиков. '
       'Источник — публичные твиты; ретвиты исключены из текстовых метрик. '
-      'Метрики описывают частоту слов, а не правоту говорящего.</footer>')
+      'Каждая метрика — с методологией ниже. '
+      'Цифры описывают частоту слов, а не правоту говорящего.</footer>')
     A("</div>")
 
     return ("<!doctype html><html lang=\"ru\"><head><meta charset=\"utf-8\">"
             "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
             "<title>Язык предвыборной кампании</title>"
             f"<style>{CSS}</style></head><body>{''.join(P)}</body></html>")
+
+
+def render_methodology(A, meth: dict | None) -> None:
+    """Секция доказуемости: для каждой метрики — источник, популяция, формула,
+    ограничения. Свёрнута по умолчанию, чтобы не мешать чтению, но всегда под
+    рукой: любую цифру можно проследить до исходных данных."""
+    if not meth:
+        return
+    A("<h2>Методология — как посчитана каждая цифра</h2>")
+    A('<p class="hint">Каждый показатель доказуем: метрика → какие твиты '
+      'берутся → поле исходного твита → формула. Раскрой нужную.</p>')
+
+    A('<details><summary>Обработка и определения (пайплайн, популяции)</summary>')
+    A('<div class="card" style="margin-top:10px">')
+    A("<h3>Шаги обработки</h3><table><tbody>")
+    for k, v in (meth.get("pipeline") or {}).items():
+        A(f'<tr><td style="white-space:nowrap;color:var(--ink-2)"><code>{E(k)}'
+          f'</code></td><td>{E(v)}</td></tr>')
+    A("</tbody></table>")
+    A('<h3 style="margin-top:14px">Популяции (какие твиты)</h3><table><tbody>')
+    for k, v in (meth.get("populations") or {}).items():
+        A(f'<tr><td style="white-space:nowrap;color:var(--ink-2)"><code>{E(k)}'
+          f'</code></td><td>{E(v)}</td></tr>')
+    A("</tbody></table></div></details>")
+
+    A('<details><summary>Все метрики: источник, формула, ограничения</summary>')
+    A('<div class="card scroll" style="margin-top:10px"><table>')
+    A('<thead><tr><th>Метрика</th><th>Данные</th><th>Формула</th>'
+      '<th>Ограничения</th></tr></thead><tbody>')
+    for k, spec in (meth.get("metrics") or {}).items():
+        A(f'<tr><td style="white-space:nowrap"><b>{E(spec["ru"])}</b><br>'
+          f'<code style="font-size:11px;color:var(--ink-muted)">{E(k)}</code></td>'
+          f'<td style="font-size:12px">{E(spec["source"])}<br>'
+          f'<span style="color:var(--ink-muted)">поп.: {E(spec["population"])}</span></td>'
+          f'<td style="font-size:12px">{E(spec["formula"])}</td>'
+          f'<td style="font-size:12px;color:var(--ink-2)">{E(spec["limits"])}</td></tr>')
+    A("</tbody></table></div></details>")
 
 
 def main() -> None:

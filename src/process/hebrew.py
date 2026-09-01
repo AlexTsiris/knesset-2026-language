@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import functools
+import html
 import re
 import unicodedata
 
@@ -48,7 +49,14 @@ HEBREW_STOPWORDS = set("""
 אמר אמרה אומר אומרת יכול יכולה צריך צריכה רוצה בא בואו הנה ובכן
 אחד אחת שני שתי שלוש ארבע חמש אלף מאה
 ה ו ב ל מ כ ש
+כול נו
 """.split())
+# כול -- лемма stanza для כל («весь/каждый»), служебное.
+# נו -- отделённый суффикс 1л.мн.ч. (שלנו->של+נו): нужен для метрики «мы»,
+# но как самостоятельное «частое слово» это шум, поэтому в стоп-словах.
+# Односимвольные ם/ן (суффикс 3л.мн.ч.) уже отсекаются правилом len<2.
+# ВАЖНО: метрика «мы/они» читает СЫРЫЕ леммы, а не content_lemmas, поэтому
+# от попадания сюда она не страдает.
 
 ENGLISH_STOPWORDS = set("""
 the a an and or but if of to in on at for with by from as is are was were be
@@ -65,6 +73,9 @@ def clean_text(text: str, drop_urls: bool = True, drop_mentions: bool = True,
                keep_hashtag_word: bool = True) -> str:
     """Убирает технический шум, оставляя человеческий текст."""
     text = unicodedata.normalize("NFC", text or "")
+    # X отдаёт текст с HTML-сущностями: &gt; &lt; &amp; &#39;. Без декода
+    # «&gt; &gt;» попадает в биграммы как «слово».
+    text = html.unescape(text)
     text = RT_PREFIX.sub("", text)
     if drop_urls:
         text = URL.sub(" ", text)
