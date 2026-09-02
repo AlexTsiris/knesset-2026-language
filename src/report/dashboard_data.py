@@ -14,6 +14,63 @@ from src.config import CFG, OUTPUTS, ROOT
 IN = OUTPUTS / "analysis.json"
 OUT = ROOT / "docs" / "data.json"
 
+# Ивритские подписи тем для доски (аудитория — израильская).
+TOPIC_HE = {
+    "security_war": "ביטחון ומלחמה", "hostages": "חטופים", "gaza": "עזה",
+    "economy": "כלכלה ויוקר המחיה", "haredi_draft": "גיוס חרדים",
+    "judiciary": "מערכת המשפט", "religion_state": "דת ומדינה",
+    "arab_society": "החברה הערבית", "settlements": "התנחלויות וריבונות",
+    "diplomacy": "יחסי חוץ", "netanyahu_trial": "משפט נתניהו",
+    "oct7_inquiry": "7 באוקטובר וּועדת חקירה", "campaign_politics": "פוליטיקה ובחירות",
+}
+TOPIC_HE_SHORT = {
+    "security_war": "ביטחון", "hostages": "חטופים", "gaza": "עזה",
+    "economy": "כלכלה", "haredi_draft": "גיוס", "judiciary": "משפט",
+    "religion_state": "דת ומדינה", "arab_society": "חברה ערבית",
+    "settlements": "התנחלויות", "diplomacy": "חוץ", "netanyahu_trial": "משפט נתניהו",
+    "oct7_inquiry": "7 באוקטובר", "campaign_politics": "בחירות",
+}
+RHET_HE = {"attack": "התקפה", "program": "תוכנית", "unity": "אחדות",
+           "we_words": "«אנחנו»", "they_words": "«הם»"}
+
+# Ивритская методология для доски (концентрированная; полная версия по-русски
+# в METHODOLOGY.md). Каждая метрика: источник, популяция, формула, ограничения.
+METHODOLOGY_HE = {
+    "populations": {
+        "all": "כל הציוצים של החשבון בחלון הבחירות (כולל ריטוויטים, תגובות, ציטוטים).",
+        "own": "ציוצים עצמיים: הכל למעט ריטוויטים. ריטוויט = מילים של אחר.",
+        "own_he": "ציוצים עצמיים בעברית (own + שפה=עברית).",
+        "all_he": "כל הציוצים בעברית.",
+    },
+    "metrics": {
+        "פעילות": {"src": "tweet_id, date · own", "f": "מספר ציוצים ליום = סך ציוצים / מספר ימי החלון.",
+                   "lim": "ממוצע על פני החלון; תלוי גם במגבלת האיסוף."},
+        "התקפה מול תוכנית": {"src": "לקסיקון · own", "f": "אחוז ציוצים עם שפת האשמה (שקר, כישלון…) מול שפת הבטחה (נקדם, נבנה…).",
+                             "lim": "מדד לקסיקלי של טון, לא ניתוח משמעות. אירוניה לא נתפסת."},
+        "מילת טביעת אצבע (keyness)": {"src": "lemmas · own_he",
+            "f": "log-likelihood (G²): משווה תדירות מילה אצל הפוליטיקאי מול כל השאר. גבוה = ייחודי לו.",
+            "lim": "מראה ייחוד, לא חשיבות. מילה נפוצה אצל כולם (ישראל) לא תופיע."},
+        "נושאים": {"src": "lemmas מול לקסיקון נושאים · own",
+            "f": "ציוץ שייך לנושא אם נמצאה בו לפחות לממה אחת מהלקסיקון. אחוז = חלק הציוצים שנגעו בנושא.",
+            "lim": "לקסיקונים ידניים וחלקיים; ציוץ יכול לגעת בכמה נושאים (סכום מעל 100%)."},
+        "«אנחנו» / «הם»": {"src": "כינויי גוף · own_he",
+            "f": "יחס כינויי גוף ראשון־רבים (אנחנו, שלנו) לשלישי־רבים (הם, שלהם). גבוה = שפת ליכוד.",
+            "lim": "מדד גס."},
+        "מי על מי": {"src": "אזכורים בשם ובתגית · own",
+            "f": "קשת א→ב אם בציוץ של א מופיע שמו/תגיתו של ב. משקל = מספר הציוצים.",
+            "lim": "אזכור אינו התקפה: הטון אינו מובחן."},
+        "גיוון לשוני": {"src": "content_lemmas · own_he",
+            "f": "מילים ייחודיות / סך המילים (עברית). גבוה = אוצר מילים עשיר.",
+            "lim": "יורד עם גודל הטקסט; השוואה הוגנת רק בנפחים דומים."},
+        "ציוץ בולט": {"src": "likes · own", "f": "הציוץ העצמי עם מירב הלייקים.",
+                      "lim": "נקודה אחת, לא מאפיינת את הטון הממוצע."},
+        "מעורבות": {"src": "likes, retweets · all", "f": "חציון הלייקים/ריטוויטים. חציון עמיד לויראליות חד־פעמית.",
+                    "lim": "מספרים מוחלטים תלויים בגודל הקהל — אין להשוות בין פוליטיקאים."},
+    },
+    "note": ("ריטוויטים הוצאו מכל מדדי הטקסט (מילים של אחר). לממטיזציה בעברית (stanza): "
+             "מילה בצורות שונות = מילה אחת. ציוצים מחוץ לחלון או של מחבר אחר (ריטוויט מקומי) סוננו."),
+}
+
 
 def build() -> dict:
     d = json.loads(IN.read_text(encoding="utf-8"))
@@ -37,6 +94,7 @@ def build() -> dict:
             "name": p["profile"]["name_ru"],
             "name_he": p["profile"]["name_he"],
             "party": p["profile"]["party"],
+            "party_he": p["profile"].get("party_he") or p["profile"]["party"],
             "bloc": p["profile"]["bloc"],
             "handle": p["profile"]["handle"],
             "tweets": o["tweets_total"],
@@ -95,7 +153,11 @@ def build() -> dict:
         "topic_order": topic_order,
         "topic_ru": topic_ru,
         "topic_short": topic_short,
+        "topic_he": TOPIC_HE,
+        "topic_he_short": TOPIC_HE_SHORT,
         "rhet_ru": rhet_ru,
+        "rhet_he": RHET_HE,
+        "methodology_he": METHODOLOGY_HE,
         "politicians": pols,
         "corpus_topics": {k: round(v["share_of_tweets"], 4)
                           for k, v in d["corpus"]["topics"].items()},
