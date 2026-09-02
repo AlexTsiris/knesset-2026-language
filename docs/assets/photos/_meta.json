@@ -1,0 +1,57 @@
+{
+  "netanyahu": {
+    "handle": "netanyahu",
+    "displayname": "Benjamin Netanyahu - בנימין נתניהו",
+    "followers": 4377798
+  },
+  "bennett": {
+    "handle": "naftalibennett",
+    "displayname": "Naftali Bennett נפתלי בנט",
+    "followers": 686234
+  },
+  "lapid": {
+    "handle": "yairlapid",
+    "displayname": "יאיר לפיד - Yair Lapid",
+    "followers": 529820
+  },
+  "lieberman": {
+    "handle": "AvigdorLiberman",
+    "displayname": "אביגדור ליברמן",
+    "followers": 244714
+  },
+  "golan": {
+    "handle": "YairGolan1",
+    "displayname": "Yair Golan - יאיר גולן",
+    "followers": 143783
+  },
+  "smotrich": {
+    "handle": "bezalelsm",
+    "displayname": "בצלאל סמוטריץ'",
+    "followers": 347594
+  },
+  "ben_gvir": {
+    "handle": "itamarbengvir",
+    "displayname": "איתמר בן גביר",
+    "followers": 367666
+  },
+  "abbas": {
+    "handle": "mnsorabbas",
+    "displayname": "Mansour Abbas מנסור עבאס",
+    "followers": 25662
+  },
+  "tibi": {
+    "handle": "Ahmad_tibi",
+    "displayname": "Ahmad Tibi",
+    "followers": 129387
+  },
+  "maoz": {
+    "handle": "avi_maoz",
+    "displayname": "אבי מעוז",
+    "followers": 1849
+  },
+  "haskel": {
+    "handle": "sharrenhaskel",
+    "displayname": "Sharren Haskel השכל שרן",
+    "followers": 46104
+  }
+}
