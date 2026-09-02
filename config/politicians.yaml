@@ -166,3 +166,23 @@ politicians:
     handle: "sharrenhaskel"
     verified: true
     aliases: ["השכל", "שרן השכל", "Haskel"]
+
+  - id: eisenkot
+    name_ru: "Гади Айзенкот"
+    name_he: "גדי איזנקוט"
+    party: "Yashar (ישר)"
+    party_he: "ישר"
+    bloc: "change_bloc"
+    handle: "gadi_eisenkot"
+    verified: true
+    aliases: ["איזנקוט", "אייזנקוט", "גדי איזנקוט", "Eisenkot", "Eizenkot", "@gadi_eisenkot"]
+
+  - id: odeh
+    name_ru: "Айман Оде"
+    name_he: "איימן עודה"
+    party: "Hadash (Joint List)"
+    party_he: "חד\"ש / הרשימה המשותפת"
+    bloc: "arab"
+    handle: "AyOdeh"
+    verified: true
+    aliases: ["עודה", "איימן עודה", "Odeh", "Ayman Odeh", "@AyOdeh"]

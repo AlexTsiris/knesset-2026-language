@@ -23,7 +23,7 @@ import re
 from collections import Counter, defaultdict
 
 from src.config import CFG, DATA_PROCESSED, OUTPUTS
-from src.process.hebrew import (EMOJI, is_stopword, lemmatize_terms,
+from src.process.hebrew import (EMOJI, fold, is_stopword, lemmatize_terms,
                                 normalize_for_match, stem_matches)
 from src.analyze.methodology import as_dict as _methodology
 
@@ -234,17 +234,42 @@ def score_lexicons(rows: list[dict], compiled: dict) -> dict:
 # --------------------------------------------------------------------------
 
 def build_alias_index(backend: str | None = None
-                      ) -> list[tuple[str, list[str], list[tuple[str, ...]]]]:
+                      ) -> list[tuple[str, set[str], list[tuple[str, ...]]]]:
+    """Индекс имён/алиасов для графа упоминаний. В отличие от тематических
+    лексиконов, здесь ТОЧНЫЙ матч по свёрнутой форме, без допуска на суффикс:
+    имена собственные почти не склоняются, а допуск ловит ложные совпадения
+    (алиас «עודה» иначе матчит частое слово «עוד» -- «ещё/более»)."""
     idx = []
     for p in CFG.politicians:
-        terms = list(p.aliases) + [p.name_he]
-        if p.handle:
-            terms.append("@" + p.handle)
-        # алиасы вида "@handle" сравниваем отдельно, тут только текстовые
-        text_terms = [t for t in terms if not t.startswith("@")]
-        single, multi = build_matcher(text_terms, backend)
+        text_terms = [t for t in p.aliases if not t.startswith("@")] + [p.name_he]
+        term_lemmas = (lemmatize_terms(text_terms, backend) if backend
+                       else [[normalize_for_match(w) for w in t.split()]
+                             for t in text_terms])
+        single: set[str] = set()
+        multi: list[tuple[str, ...]] = []
+        for parts in term_lemmas:
+            parts = [fold(x) for x in parts if x]
+            if not parts:
+                continue
+            if len(parts) == 1:
+                single.add(parts[0])
+            else:
+                multi.append(tuple(parts))
         idx.append((p.id, single, multi))
     return idx
+
+
+def alias_hit(row: dict, single: set[str], multi: list[tuple[str, ...]]) -> bool:
+    """Точное совпадение имени/алиаса в тексте (по свёрнутым леммам)."""
+    lemmas = [fold(l) for l in (row.get("lemmas") or [])]
+    if any(l in single for l in lemmas):
+        return True
+    for m in multi:
+        n = len(m)
+        for i in range(len(lemmas) - n + 1):
+            if tuple(lemmas[i:i + n]) == m:
+                return True
+    return False
 
 
 def mentions_graph(by_pol: dict[str, list[dict]]) -> dict:
@@ -268,7 +293,7 @@ def mentions_graph(by_pol: dict[str, list[dict]]) -> dict:
             for pid, single, multi in idx:
                 if pid == src:
                     continue
-                if lexicon_hits(r, single, multi):
+                if alias_hit(r, single, multi):
                     targets.add(pid)
             for t in targets:
                 if t != src:
@@ -585,7 +610,7 @@ def main() -> None:
         own_single, own_multi = next(
             (s, m) for i, s, m in alias_idx if i == pid)
         third_person = sum(1 for r in own
-                           if lexicon_hits(r, own_single, own_multi))
+                           if alias_hit(r, own_single, own_multi))
 
         topic_scores = score_lexicons(own, compiled_topics)
         result["politicians"][pid] = {

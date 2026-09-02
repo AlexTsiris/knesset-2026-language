@@ -318,7 +318,7 @@ function hero(){
       el('span',{class:'date',text:'עודכן 1 בספטמבר 2026'})]),
     el('div',{class:'hero'},[
       el('h1',{class:'head serif',html:'כולם מדברים על נתניהו.<br><span class="em">הוא כמעט לא מגיב.</span>'}),
-      el('p',{class:'dek',text:'ניתחנו '+sp(m.n_tweets)+' ציוצים של עשרה ראשי מפלגות מאז פיזור הכנסת. הנתונים חושפים את שפת הקמפיין — מי תוקף, מי מבטיח, ואיזו מילה אחת מסגירה כל אחד מהם.'}),
+      el('p',{class:'dek',text:'ניתחנו '+sp(m.n_tweets)+' ציוצים של '+m.n_politicians+' ראשי מפלגות מאז פיזור הכנסת. הנתונים חושפים את שפת הקמפיין — מי תוקף, מי מבטיח, ואיזו מילה אחת מסגירה כל אחד מהם.'}),
       el('div',{class:'byline'},[
         el('span',{html:'<b>מפת שפה</b> · ניתוח עצמאי'}),
         el('span',{class:'dot'}),el('span',{text:m.days+' ימי קמפיין'}),
@@ -327,13 +327,13 @@ function hero(){
     ]),
     el('p',{class:'lead'},[
       el('span',{class:'dropcap serif',text:'ר'}),
-      'גע לפני שמערכת הבחירות נכנסת להילוך גבוה, בחנּו כל ציוץ שכתבו עשרה ראשי מפלגות מאז פיזור הכנסת ב־17 ביולי — '+sp(m.n_tweets)+' ציוצים בתוך '+m.days+' ימים. השאלה איננה מי צודק, אלא ',
+      'גע לפני שמערכת הבחירות נכנסת להילוך גבוה, בחנּו כל ציוץ שכתבו '+m.n_politicians+' ראשי מפלגות מאז פיזור הכנסת ב־17 ביולי — '+sp(m.n_tweets)+' ציוצים בתוך '+m.days+' ימים. השאלה איננה מי צודק, אלא ',
       el('em',{text:'מה נאמר וכמה'}),
       ': אילו מילים חוזרות, מי עסוק בהתקפה ומי בהבטחה, ואת מי כולם גוררים אל תוך השיחה. תבנית אחת חוזרת שוב ושוב — כמעט כל שיחה מובילה בחזרה לאדם אחד.']),
   );
   const tiles=el('div',{class:'stats'});
   [[sp(m.n_tweets),'ציוצים נותחו'],[m.n_politicians,'ראשי מפלגות'],
-   [m.days,'ימי קמפיין'],[sp(ntalk),'אזכורי נתניהו — פי 2.5 מהבא']].forEach(([v,k])=>
+   [m.days,'ימי קמפיין'],[sp(ntalk),'אזכורי נתניהו — פי 2.2 מהבא']].forEach(([v,k])=>
     tiles.append(el('div',{class:'stat'},[el('div',{class:'n serif',html:''+v}),el('div',{class:'l',text:k})])));
   wrap.append(tiles);
   return wrap;
@@ -442,7 +442,7 @@ function gravity(){
   const sec=el('section',{class:'sec'});
   sec.append(el('div',{class:'label',text:'מרכז הכובד'}),
     el('h2',{class:'sh serif',text:'הכול סובב סביב איש אחד'}),
-    el('p',{class:'sub',text:'נתניהו תוקף הכי מעט — רק 2% מציוציו נושאים שפת האשמה. ובכל זאת מאזכרים אותו יותר מכולם: פי 2.5 מהבא אחריו. האופוזיציה כולה מסתובבת סביבו, והבחירות הן, למעשה, משאל עַם עליו.'}));
+    el('p',{class:'sub',text:'נתניהו תוקף הכי מעט — רק 2% מציוציו נושאים שפת האשמה. ובכל זאת מאזכרים אותו יותר מכולם: פי 2.2 מהמתמודד הבא, גדי איזנקוט. האופוזיציה כולה מסתובבת סביבו, והבחירות הן, למעשה, משאל עַם עליו.'}));
   const talked=D.mentions.most_talked.slice(0,6);
   const maxT=Math.max(...talked.map(x=>x[1]),1);
   const list=el('div',{class:'mn-list'});
@@ -450,7 +450,7 @@ function gravity(){
     el('div',{class:'mn-nm',text:byId[id]?byId[id].name_he:id}),
     el('div',{class:'mn-track'},[el('div',{class:'mn-fill'+(i===0?' lead':''),style:`width:${w/maxT*100}%`})]),
     el('div',{class:'mn-val serif',text:w})])));
-  sec.append(list,el('p',{class:'fig-note',text:'איור 4 — מספר הפעמים שכל דמות אוזכרה בציוצי האחרים (בתגית ובשם).'}));
+  sec.append(list,el('p',{class:'fig-note',text:'איור 4 — מספר הפעמים שכל דמות אוזכרה בציוצי האחרים (בתגית ובשם). מנהיג רע״ם, מנצור עבאס, נעדר מהניתוח: הוא לא צייץ כלל בחלון הקמפיין (ציוצו האחרון — 30 ביוני).'}));
   // exhibit: top viral tweet overall
   const top=[...D.politicians].filter(p=>p.viral&&p.viral.text)
     .sort((a,b)=>(b.viral.likes||0)-(a.viral.likes||0))[0];
