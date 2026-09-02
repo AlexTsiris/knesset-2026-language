@@ -83,9 +83,15 @@ politicians:
     party: "Shas"
     party_he: "ש\"ס"
     bloc: "right_coalition"
+    # Проверено 2026-09-02 (scrape verify + перебор кандидатов):
+    #   активного аккаунта в X у него нет. Найденные тёзки -- пустые
+    #   или посторонние (напр. @mgafni -- американский журналист
+    #   Matthias Gafni). Харедимные партии в X практически не
+    #   присутствуют: остаётся только @ShasParty (82 твита).
+    #   Поэтому handle: null -- он участвует лишь как ОБЪЕКТ упоминаний.
     handle: null
     verified: false
-    aliases: ["דרעי", "אריה דרעי", "Deri", "Deri"]
+    aliases: ["דרעי", "אריה דרעי", "Deri", "Arye Deri", "Aryeh Deri"]
 
   - id: goldknopf
     name_ru: "Ицхак Гольдкнопф"
@@ -93,9 +99,15 @@ politicians:
     party: "United Torah Judaism / Agudat Yisrael"
     party_he: "יהדות התורה"
     bloc: "right_coalition"
+    # Проверено 2026-09-02 (scrape verify + перебор кандидатов):
+    #   активного аккаунта в X у него нет. Найденные тёзки -- пустые
+    #   или посторонние (напр. @mgafni -- американский журналист
+    #   Matthias Gafni). Харедимные партии в X практически не
+    #   присутствуют: остаётся только @ShasParty (82 твита).
+    #   Поэтому handle: null -- он участвует лишь как ОБЪЕКТ упоминаний.
     handle: null
     verified: false
-    aliases: ["גולדקנופף", "Goldknopf"]
+    aliases: ["גולדקנופף", "יצחק גולדקנופף", "Goldknopf", "Yitzhak Goldknopf"]
 
   - id: gafni
     name_ru: "Моше Гафни"
@@ -103,9 +115,15 @@ politicians:
     party: "United Torah Judaism / Degel HaTorah"
     party_he: "יהדות התורה / דגל התורה"
     bloc: "right_coalition"
+    # Проверено 2026-09-02 (scrape verify + перебор кандидатов):
+    #   активного аккаунта в X у него нет. Найденные тёзки -- пустые
+    #   или посторонние (напр. @mgafni -- американский журналист
+    #   Matthias Gafni). Харедимные партии в X практически не
+    #   присутствуют: остаётся только @ShasParty (82 твита).
+    #   Поэтому handle: null -- он участвует лишь как ОБЪЕКТ упоминаний.
     handle: null
     verified: false
-    aliases: ["גפני", "משה גפני", "Gafni"]
+    aliases: ["גפני", "משה גפני", "Gafni", "Moshe Gafni"]
 
   - id: abbas
     name_ru: "Мансур Аббас"

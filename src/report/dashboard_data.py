@@ -41,6 +41,9 @@ RHET_HE = {"attack": "התקפה", "program": "תוכנית", "unity": "אחדו
 # соперника -- осмысленный отпечаток.
 KEYNESS_NAME_STOP = {"סגל", "עמית"}
 
+# Сколько слов лексикона показывать в подсказке на доске.
+LEX_SAMPLE = 8
+
 # Ивритская методология для доски (концентрированная; полная версия по-русски
 # в METHODOLOGY.md). Каждая метрика: источник, популяция, формула, ограничения.
 METHODOLOGY_HE = {
@@ -67,9 +70,13 @@ METHODOLOGY_HE = {
         "מי על מי": {"src": "אזכורים בשם ובתגית · own",
             "f": "קשת א→ב אם בציוץ של א מופיע שמו/תגיתו של ב. משקל = מספר הציוצים.",
             "lim": "אזכור אינו התקפה: הטון אינו מובחן."},
-        "גיוון לשוני": {"src": "content_lemmas · own_he",
-            "f": "מילים ייחודיות / סך המילים (עברית). גבוה = אוצר מילים עשיר.",
-            "lim": "יורד עם גודל הטקסט; השוואה הוגנת רק בנפחים דומים."},
+        "גיוון לשוני (STTR)": {"src": "content_lemmas · own_he",
+            "f": ("הטקסט נחתך לחלונות של 500 מילות תוכן; בכל חלון נמדד "
+                  "מילים ייחודיות / 500, והממוצע הוא הציון. חלון זהה לכולם — "
+                  "לכן הערכים בני־השוואה. גבוה = אוצר מילים עשיר."),
+            "lim": ("היחס הגולמי (ייחודיות / סך הטקסט) יורד מכניסטית עם אורך "
+                    "הטקסט ולכן אינו כשיר להשוואה — משום כך החלון. שארית "
+                    "קצרה מחלון אינה נספרת.")},
         "ציוץ בולט": {"src": "likes · own", "f": "הציוץ העצמי עם מירב הלייקים.",
                       "lim": "נקודה אחת, לא מאפיינת את הטון הממוצע."},
         "מעורבות": {"src": "likes, retweets · all", "f": "חציון הלייקים/ריטוויטים. חציון עמיד לויראליות חד־פעמית.",
@@ -86,6 +93,13 @@ def build() -> dict:
     topic_ru = {k: v["ru"] for k, v in CFG.topics.items()}
     topic_short = {k: v.get("short", v["ru"]) for k, v in CFG.topics.items()}
     rhet_ru = {k: v["ru"] for k, v in CFG.rhetoric.items()}
+    # Примеры слов лексикона -- чтобы читатель доски видел, ЧЕМ измерена тема,
+    # а не верил подписи на слово. Берём первые LEX_SAMPLE терминов (в yaml
+    # они выписаны от самых характерных) + общий размер лексикона.
+    topic_terms = {k: {"n": len(v["he"]), "ex": v["he"][:LEX_SAMPLE]}
+                   for k, v in CFG.topics.items()}
+    rhet_terms = {k: {"n": len(v["he"]), "ex": v["he"][:LEX_SAMPLE]}
+                  for k, v in CFG.rhetoric.items()}
 
     # порядок тем — по доле в корпусе
     topic_order = [k for k, _ in sorted(
@@ -118,7 +132,10 @@ def build() -> dict:
             "we": rh["we_words"]["hits"],
             "they": rh["they_words"]["hits"],
             "ttr": (p.get("lexical_diversity") or {}).get("ttr", 0),
+            "sttr": (p.get("lexical_diversity") or {}).get("sttr", 0),
+            "ttr_uniq": (p.get("lexical_diversity") or {}).get("unique", 0),
             "ttr_total": (p.get("lexical_diversity") or {}).get("total", 0),
+            "sttr_windows": (p.get("lexical_diversity") or {}).get("sttr_windows", 0),
             "focus_hhi": (p.get("topic_concentration") or {}).get("hhi", 0),
             "focus_top": (p.get("topic_concentration") or {}).get("top_topic"),
             "topics": {k: round(v["share_of_tweets"], 4)
@@ -143,10 +160,20 @@ def build() -> dict:
             "weekly": d["timeline"]["weekly_volume"].get(pid, {}),
         })
 
-    # граф упоминаний: только рёбра между политиками из выборки
+    # Граф упоминаний. Источником может быть только политик из выборки (пишет
+    # он сам), а ЦЕЛЬЮ -- любой политик из конфига, включая тех, у кого нет
+    # аккаунта в X: лидеры харедимных партий (Дери, Гафни, Гольдкнопф) и
+    # Аббас не твитят, но их упоминают, и без них картина «кто кого тащит в
+    # разговор» неполна. Такие «молчащие» отдаются отдельным списком, чтобы
+    # доска подписала их как не-твитящих, а не как политиков с нулём метрик.
     ids = {p["id"] for p in pols}
+    cfg_ids = {p.id for p in CFG.politicians}
     edges = [e for e in d["mentions"]["edges"]
-             if e["source"] in ids and e["target"] in ids]
+             if e["source"] in ids and e["target"] in cfg_ids]
+    silent = [{"id": c.id, "name": c.name_ru, "name_he": c.name_he,
+               "party_he": getattr(c, "party_he", None) or c.party,
+               "bloc": c.bloc, "handle": c.handle}
+              for c in CFG.politicians if c.id not in ids]
 
     return {
         "meta": {
@@ -165,9 +192,13 @@ def build() -> dict:
         "topic_he": TOPIC_HE,
         "topic_he_short": TOPIC_HE_SHORT,
         "rhet_ru": rhet_ru,
+        "topic_terms": topic_terms,
+        "rhet_terms": rhet_terms,
+        "sttr_window": 500,
         "rhet_he": RHET_HE,
         "methodology_he": METHODOLOGY_HE,
         "politicians": pols,
+        "silent": silent,
         "corpus_topics": {k: round(v["share_of_tweets"], 4)
                           for k, v in d["corpus"]["topics"].items()},
         "corpus_ngrams": {
@@ -178,7 +209,7 @@ def build() -> dict:
         "mentions": {
             "edges": edges,
             "most_talked": [[p, w] for p, w in d["mentions"]["most_talked_about"]
-                            if p in ids],
+                            if p in cfg_ids],
             "most_talkative": [[p, w] for p, w in d["mentions"]["most_talkative"]
                                if p in ids],
         },

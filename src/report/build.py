@@ -517,17 +517,20 @@ def build(d: dict) -> str:
 
     # ---------- разнообразие словаря и сфокусированность ----------
     A("<h2>Словарь: богатство и фокус</h2>")
-    A('<p class="hint">Слева — лексическое разнообразие (доля уникальных слов; '
-      'честно сравнивать при близком объёме, поэтому объём рядом). Справа — '
-      'сфокусированность на одной теме (индекс концентрации HHI по темам: '
-      'выше = политик одной темы).</p>')
+    A('<p class="hint">Слева — лексическое разнообразие (STTR: доля уникальных '
+      'слов в окне фиксированной длины, усреднённая по окнам — поэтому корпуса '
+      'разного объёма сравнимы; сырой TTR указан в скобках вместе с объёмом). '
+      'Справа — сфокусированность на одной теме (индекс концентрации HHI по '
+      'темам: выше = политик одной темы).</p>')
     A('<div class="grid2">')
-    A('<div class="card"><h3>Разнообразие словаря (TTR)</h3>')
+    A('<div class="card"><h3>Разнообразие словаря (STTR)</h3>')
     ld = [(nm(p), pols[p].get("lexical_diversity", {})) for p in order]
     ld = [(n, x) for n, x in ld if x.get("total", 0) >= 50]
-    mx = max((x["ttr"] for _n, x in ld), default=1) or 1
-    A(bar_rows([(f'{n}', x["ttr"] / mx, f'{x["ttr"]:.2f} ({x["total"]} сл.)')
-                for n, x in sorted(ld, key=lambda t: -t[1]["ttr"])], "var(--s3)"))
+    key = lambda x: x.get("sttr", x["ttr"])
+    mx = max((key(x) for _n, x in ld), default=1) or 1
+    A(bar_rows([(f'{n}', key(x) / mx,
+                 f'{key(x):.2f} (TTR {x["ttr"]:.2f}, {x["total"]} сл.)')
+                for n, x in sorted(ld, key=lambda t: -key(t[1]))], "var(--s3)"))
     A("</div>")
     A('<div class="card"><h3>Сфокусированность на теме (HHI)</h3>')
     tc = [(nm(p), pols[p].get("topic_concentration", {})) for p in order]

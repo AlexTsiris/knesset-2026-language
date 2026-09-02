@@ -446,18 +446,41 @@ def slogan_repetition(rows: list[dict], n: int = 4) -> dict:
     }
 
 
+STTR_WINDOW = 500
+
+
 def lexical_diversity(rows: list[dict]) -> dict:
-    """Type-token ratio по содержательным леммам иврита: уникальных / всего.
-    Выше = богаче словарь. Честно сравнивать только при близких объёмах,
-    поэтому объём отдаём рядом."""
+    """Богатство словаря по содержательным леммам иврита.
+
+    ttr  -- сырой type-token ratio: уникальных / всего. Механически падает с
+            ростом текста (частотные слова повторяются), поэтому сравнивать
+            политиков по нему НЕЛЬЗЯ: у нас корпуса от 950 до 7300 лемм, и ttr
+            почти идеально повторяет обратный порядок объёма.
+    sttr -- standardised TTR: текст режется на подряд идущие окна по
+            STTR_WINDOW лемм, ttr считается в каждом окне и усредняется.
+            Окно одинаковое для всех -> величина сопоставима между корпусами.
+            Хвост короче окна отбрасывается; если лемм меньше окна, отдаём
+            сырой ttr и помечаем это через sttr_windows = 0.
+    """
     tokens: list[str] = []
     for r in rows:
         if r.get("lang") == "he":
             tokens.extend(r.get("content_lemmas") or [])
     if not tokens:
-        return {"ttr": 0.0, "unique": 0, "total": 0}
-    uniq = len(set(tokens))
-    return {"ttr": round(uniq / len(tokens), 4), "unique": uniq, "total": len(tokens)}
+        return {"ttr": 0.0, "sttr": 0.0, "sttr_window": STTR_WINDOW,
+                "sttr_windows": 0, "unique": 0, "total": 0}
+    total = len(tokens)
+    ttr = len(set(tokens)) / total
+    n_win = total // STTR_WINDOW
+    if n_win:
+        vals = [len(set(tokens[i * STTR_WINDOW:(i + 1) * STTR_WINDOW])) / STTR_WINDOW
+                for i in range(n_win)]
+        sttr = sum(vals) / n_win
+    else:
+        sttr = ttr
+    return {"ttr": round(ttr, 4), "sttr": round(sttr, 4),
+            "sttr_window": STTR_WINDOW, "sttr_windows": n_win,
+            "unique": len(set(tokens)), "total": total}
 
 
 def viral_tweet(rows: list[dict]) -> dict | None:

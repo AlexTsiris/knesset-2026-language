@@ -213,13 +213,11 @@ h2.sh{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;
 .corpus-card h3{font-family:"Frank Ruhl Libre",serif;font-size:16px;font-weight:700;margin:0 0 10px}
 
 /* mentions extra list */
-.mn-list{display:flex;flex-direction:column;margin-top:6px}
-.mn-row{display:grid;grid-template-columns:clamp(110px,30vw,150px) 1fr 44px;gap:12px;align-items:center;padding:8px 0}
-.mn-nm{font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mn-track{height:22px;background:transparent}
-.mn-fill{height:100%;background:var(--blue);border-radius:1px}
-.mn-fill.lead{background:var(--clay)}
-.mn-val{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:16px;text-align:left}
+.hm.mx{min-width:720px}
+.hm.mx th.row{font-weight:600;font-size:12px}
+.cell.self{background:repeating-linear-gradient(45deg,transparent,transparent 3px,var(--rule2) 3px,var(--rule2) 4px);color:var(--muted)}
+.cell.tot{background:transparent;color:var(--ink2);font-weight:700;font-size:13px}
+.hm th.hcol.mute{color:var(--muted);font-style:italic}
 
 /* methodology */
 details{margin-top:12px}
@@ -241,9 +239,11 @@ details[open] summary::before{content:"▾ "}
 
 /* tooltip */
 #tip{position:fixed;z-index:99;pointer-events:none;background:var(--ink);color:var(--paper);
-  font-size:12.5px;line-height:1.45;padding:7px 11px;border-radius:4px;max-width:250px;
+  font-size:12.5px;line-height:1.45;padding:7px 11px;border-radius:4px;max-width:290px;
   box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .1s;font-variant-numeric:tabular-nums}
 #tip.on{opacity:1}
+.tip-lex{color:var(--muted);font-size:11.5px;display:block;margin-top:3px}
+.seg-desc .tip-lex,.sub .tip-lex{color:var(--ink2)}
 .loading{padding:90px 20px;text-align:center;color:var(--muted)}
 </style>
 </head>
@@ -299,13 +299,20 @@ function hov(node,html){node.addEventListener('mousemove',e=>showTip(html,e.clie
 fetch('data.json').then(r=>r.json()).then(render).catch(e=>{
   $('#app').innerHTML='<div class="loading">שגיאה בטעינת הנתונים. פתחו את הדף דרך שרת (GitHub Pages).</div>';console.error(e);});
 
-let D,byId;
+let D,byId,silentIds;
 function render(data){
-  D=data; byId=Object.fromEntries(D.politicians.map(p=>[p.id,p]));
+  D=data; byId=Object.fromEntries([...D.politicians,...(D.silent||[])].map(p=>[p.id,p]));
+  silentIds=new Set((D.silent||[]).map(p=>p.id));
   const app=$('#app'); app.innerHTML='';
   app.append(hero(),leaderboard(),fingerprints(),topicsHeat(),gravity(),
     attackProgram(),weThey(),viral(),corpus(),methodology(),footer());
 }
+
+// Показать читателю, ЧЕМ измерена метрика: размер лексикона + примеры слов.
+// Без этого проценты по темам/риторике -- утверждение на веру.
+function lexEx(bag,key){const t=(bag||{})[key];if(!t||!t.ex||!t.ex.length)return '';
+  return `<span class="tip-lex">מהלקסיקון (${t.n} מילים): ${t.ex.join(' · ')}${t.n>t.ex.length?' …':''}</span>`;}
+const topicEx=k=>lexEx(D.topic_terms,k), rhetEx=k=>lexEx(D.rhet_terms,k);
 
 function seqLevel(v){if(v<=0)return 'lv0';return 'lv'+Math.min(7,1+Math.floor(v*7));}
 
@@ -321,7 +328,7 @@ function hero(){
       el('span',{class:'date',text:'עודכן 1 בספטמבר 2026'})]),
     el('div',{class:'hero'},[
       el('h1',{class:'head serif',html:'שפת הקמפיין,<br><span class="em">מילה במילה</span>'}),
-      el('p',{class:'dek',text:'ניתחנו '+sp(m.n_tweets)+' ציוצים של '+m.n_politicians+' ראשי מפלגות מאז פיזור הכנסת. הנתונים חושפים את שפת הקמפיין — מי תוקף, מי מבטיח, ואיזו מילה אחת מסגירה כל אחד מהם.'}),
+      el('p',{class:'dek',text:'ניתחתי '+sp(m.n_tweets)+' ציוצים של '+m.n_politicians+' ראשי מפלגות מאז פיזור הכנסת. הנתונים חושפים את שפת הקמפיין — מי תוקף, מי מבטיח, ואיזו מילה אחת מסגירה כל אחד מהם.'}),
       el('div',{class:'byline'},[
         el('span',{html:'<b>מפת שפה</b> · ניתוח עצמאי'}),
         el('span',{class:'dot'}),el('span',{text:m.days+' ימי קמפיין'}),
@@ -330,7 +337,7 @@ function hero(){
     ]),
     el('p',{class:'lead'},[
       el('span',{class:'dropcap serif',text:'ר'}),
-      'גע לפני שמערכת הבחירות נכנסת להילוך גבוה, בחנּו כל ציוץ שכתבו '+m.n_politicians+' ראשי מפלגות מאז פיזור הכנסת ב־17 ביולי — '+sp(m.n_tweets)+' ציוצים בתוך '+m.days+' ימים. השאלה איננה מי צודק, אלא ',
+      'גע לפני שמערכת הבחירות נכנסת להילוך גבוה, בחנתי כל ציוץ שכתבו '+m.n_politicians+' ראשי מפלגות מאז פיזור הכנסת ב־17 ביולי — '+sp(m.n_tweets)+' ציוצים בתוך '+m.days+' ימים. השאלה איננה מי צודק, אלא ',
       el('em',{text:'מה נאמר וכמה'}),
       ': אילו מילים חוזרות, מי עסוק בהתקפה ומי בהבטחה, ואת מי כולם גוררים אל תוך השיחה. תבנית אחת חוזרת שוב ושוב — כמעט כל שיחה מובילה בחזרה לאדם אחד.']),
   );
@@ -345,19 +352,31 @@ function hero(){
 // ===== LEADERBOARD =====
 const LB={
   per_day:{label:'פעילות',fmt:v=>v.toFixed(1),color:'var(--blue)',
-    desc:'ציוצים ליום בחלון הקמפיין (כלל הציוצים חלקי מספר הימים).'},
+    desc:()=>'ציוצים ליום בחלון הקמפיין (כלל הציוצים חלקי מספר הימים).',
+    more:p=>`${sp(p.tweets)} ציוצים · ${D.meta.days} ימים`},
   attack:{label:'התקפה',fmt:pct,color:'var(--clay)',
-    desc:'אחוז הציוצים העצמיים עם שפת האשמה: שקר, כישלון, בושה.'},
+    desc:()=>'אחוז הציוצים העצמיים שבהם הופיעה מילה מלקסיקון ההאשמה.',
+    lex:'attack',
+    more:p=>`${Math.round(p.attack*p.own)} ציוצים מתוך ${p.own} עצמיים`},
   program:{label:'תוכנית',fmt:pct,color:'var(--blue)',
-    desc:'אחוז הציוצים העצמיים עם שפת הבטחה: נקדם, נבנה, תוכנית.'},
+    desc:()=>'אחוז הציוצים העצמיים שבהם הופיעה מילה מלקסיקון ההבטחה.',
+    lex:'program',
+    more:p=>`${Math.round(p.program*p.own)} ציוצים מתוך ${p.own} עצמיים`},
   retweet_share:{label:'ריטוויטים',fmt:pct,color:'var(--clay)',
-    desc:'אחוז הריטוויטים מכלל הציוצים — הגברת קול של אחר.'},
-  ttr:{label:'גיוון לשוני',fmt:v=>v.toFixed(2),color:'var(--olive)',
-    desc:'מילים ייחודיות חלקי סך המילים (עברית). הוגן להשוואה בנפחים דומים.'},
+    desc:()=>'אחוז הריטוויטים מכלל הציוצים — הגברת קול של אחר.',
+    more:p=>`${p.tweets-p.own} ריטוויטים מתוך ${sp(p.tweets)} ציוצים`},
+  sttr:{label:'גיוון לשוני',fmt:v=>v.toFixed(2),color:'var(--olive)',
+    desc:()=>`STTR: הטקסט נחתך לחלונות של ${D.sttr_window} מילות תוכן, בכל חלון נמדד `+
+      `אחוז המילים הייחודיות, והציון הוא הממוצע. חלון זהה לכולם — לכן ההשוואה הוגנת.`,
+    more:p=>`${p.sttr_windows} חלונות של ${D.sttr_window} מילים · `+
+      `בסך הכל ${sp(p.ttr_uniq)} מילים ייחודיות מתוך ${sp(p.ttr_total)}`},
   wt:{label:'«אנחנו» / «הם»',fmt:v=>v.toFixed(1),color:'var(--olive)',
-    desc:'יחס כינויי «אנחנו» ל«הם». גבוה = שפה מאחדת.'},
+    desc:()=>'יחס אזכורי כינויי גוף ראשון־רבים לשלישי־רבים. גבוה = שפה מאחדת.',
+    lex:'we_words',lex2:'they_words',
+    more:p=>`אנחנו ${p.we} · הם ${p.they}`},
 };
 const lbVal=(p,k)=>k==='wt'?p.we/Math.max(1,p.they):p[k];
+const lbDesc=M=>M.desc()+(M.lex?' '+rhetEx(M.lex):'')+(M.lex2?' '+rhetEx(M.lex2):'');
 function leaderboard(){
   const sec=el('section',{class:'sec'});
   sec.append(el('div',{class:'label',text:'מי הכי פעיל'}),
@@ -366,7 +385,7 @@ function leaderboard(){
   const seg=el('div',{class:'seg'}); const hint=el('span',{class:'seg-desc'});
   const body=el('div',{class:'lb'}); let cur='per_day';
   function draw(){
-    const M=LB[cur]; hint.textContent=M.desc;
+    const M=LB[cur]; hint.innerHTML=lbDesc(M);
     const rows=[...D.politicians].map(p=>({p,v:lbVal(p,cur)})).sort((a,b)=>b.v-a.v);
     const max=Math.max(...rows.map(r=>r.v))||1; body.innerHTML='';
     rows.forEach((r,i)=>{
@@ -379,7 +398,8 @@ function leaderboard(){
           el('div',{class:'lb-fill',style:`width:${w}%;background:${M.color}`})])]),
         el('div',{class:'lb-val serif',text:M.fmt(r.v)}),
       ]);
-      hov(row,`<b>${r.p.name_he}</b><br>${M.label}: ${M.fmt(r.v)}`);
+      hov(row,`<b>${r.p.name_he}</b><br>${M.label}: <b>${M.fmt(r.v)}</b>`+
+        (M.more?`<br>${M.more(r.p)}`:'')+(M.lex?'<br>'+rhetEx(M.lex):''));
       body.append(row);
     });
   }
@@ -407,10 +427,16 @@ function fingerprints(){
       el('div',{},[el('span',{class:'fp-word serif',text:top.w}),
         el('span',{class:'fp-x',text:top.ratio?'×'+top.ratio.toFixed(0):'רק הוא'})]),
     ]);
-    hov(row,`<b>${p.name_he}</b><br>${top.w} — ${top.count} פעמים`);
+    hov(row,`<b>${p.name_he}</b> · «${top.w}»<br>`+
+      `${top.count} פעמים בציוציו העצמיים<br>`+
+      (top.ratio?`שכיחות יחסית: פי ${top.ratio.toFixed(1)} מאצל כל האחרים יחד`
+                :'אף אחד מ־11 האחרים לא השתמש במילה הזו — אין במה להשוות, ולכן «רק הוא» ולא מספר')+
+      `<br>ציון G² = ${top.g2} — לפיו הרשימה מסודרת, ולא לפי המספר שבצד`);
     sec.append(row);
   });
-  sec.append(el('p',{class:'fig-note',text:'איור 2 — המילה בעלת ציון ה־G² הגבוה ביותר לכל פוליטיקאי. המספר: פי כמה יותר מהאחרים.'}));
+  sec.append(el('p',{class:'fig-note',html:'איור 2 — לכל פוליטיקאי המילה בעלת ציון ה־G² הגבוה ביותר; הרשימה מסודרת לפי G². '+
+      'המספר שבצד המילה הוא פי כמה שכיחה המילה אצלו מאשר אצל כל האחרים יחד. '+
+      '«רק הוא» = אף אחד אחר לא השתמש במילה, ולכן אין יחס לחשב (חלוקה באפס).'}));
   return sec;
 }
 
@@ -419,14 +445,14 @@ function topicsHeat(){
   const sec=el('section',{class:'sec'});
   sec.append(el('div',{class:'label',text:'סדר היום'}),
     el('h2',{class:'sh serif',text:'ביטחון ובחירות — שני הנושאים ששולטים בשיח'}),
-    el('p',{class:'sub',text:'אחוז הציוצים העצמיים שנגעו בכל נושא. ככל שהתא כהה יותר, האחוז גבוה יותר. עברו עם העכבר על כותרת נושא להסבר, ועל תא לערך מדויק. הטבלה נגללת הצידה →'}));
+    el('p',{class:'sub',text:'ציוץ «נגע בנושא» אם הופיעה בו לפחות מילה אחת מלקסיקון הנושא. עברו עם העכבר על כותרת נושא כדי לראות אילו מילים בדיוק נספרות שם, ועל תא — לערך מדויק. הטבלה נגללת הצידה →'}));
   const order=D.topic_order;
   const tbl=el('table',{class:'hm'});
   const thead=el('tr',{},[el('th',{class:'row'})]);
   order.forEach(t=>{
     const th=el('th',{class:'hcol',text:D.topic_he_short[t]||D.topic_short[t]});
     hov(th,`<b>${D.topic_he[t]||D.topic_ru[t]}</b><br>אחוז הציוצים העצמיים שבהם `+
-      `הופיעה מילה מהנושא (זוהה לפי לקסיקון מילים; ריטוויטים לא נספרים).`);
+      `הופיעה לפחות מילה אחת מהלקסיקון (ריטוויטים לא נספרים).`+topicEx(t));
     thead.append(th);
   });
   tbl.append(el('thead',{},[thead]));
@@ -435,7 +461,8 @@ function topicsHeat(){
     const tr=el('tr',{},[el('th',{class:'row',text:p.name_he})]);
     order.forEach(t=>{const s=p.topics[t]||0,v=Math.min(1,s/0.45);
       const cell=el('div',{class:'cell '+seqLevel(v),text:s<0.03?'':pct(s)});
-      hov(cell,`<b>${p.name_he}</b><br>${D.topic_he[t]||D.topic_ru[t]}: <b>${pct(s)}</b>`);
+      hov(cell,`<b>${p.name_he}</b><br>${D.topic_he[t]||D.topic_ru[t]}: <b>${pct(s)}</b>`+
+        `<br>${Math.round(s*p.own)} ציוצים מתוך ${p.own} עצמיים`+topicEx(t));
       tr.append(el('td',{},[cell]));});
     tb.append(tr);
   });
@@ -449,16 +476,60 @@ function topicsHeat(){
 function gravity(){
   const sec=el('section',{class:'sec'});
   sec.append(el('div',{class:'label',text:'מרכז הכובד'}),
-    el('h2',{class:'sh serif',text:'מי מאזכר את מי, וכמה'}),
-    el('p',{class:'sub',text:'נתניהו תוקף הכי מעט — רק 2% מציוציו נושאים שפת האשמה. ובכל זאת מאזכרים אותו יותר מכולם: פי 2.2 מהמתמודד הבא, גדי איזנקוט. רוב האזכורים מגיעים מהאופוזיציה.'}));
-  const talked=D.mentions.most_talked.slice(0,6);
-  const maxT=Math.max(...talked.map(x=>x[1]),1);
-  const list=el('div',{class:'mn-list'});
-  talked.forEach(([id,w],i)=>list.append(el('div',{class:'mn-row'},[
-    el('div',{class:'mn-nm',text:byId[id]?byId[id].name_he:id}),
-    el('div',{class:'mn-track'},[el('div',{class:'mn-fill'+(i===0?' lead':''),style:`width:${w/maxT*100}%`})]),
-    el('div',{class:'mn-val serif',text:w})])));
-  sec.append(list,el('p',{class:'fig-note',text:'איור 4 — מספר הפעמים שכל דמות אוזכרה בציוצי האחרים (בתגית ובשם). מנהיג רע״ם, מנצור עבאס, נעדר מהניתוח: הוא לא צייץ כלל בחלון הקמפיין (ציוצו האחרון — 30 ביוני).'}));
+    el('h2',{class:'sh serif',text:'מי מאזכר את מי'}),
+    el('p',{class:'sub',text:'כל שורה — מי מאזכר; כל עמודה — את מי. תא = מספר הציוצים העצמיים שבהם המאזכר כתב את שמו או את תגיתו של האחר. ככל שהתא כהה יותר, כך יותר אזכורים. הטבלה נגללת הצידה →'}));
+  const ids=D.politicians.map(p=>p.id);            // пишут сами -> строки
+  const allIds=[...ids,...(D.silent||[]).map(p=>p.id)]; // + молчащие -> только столбцы
+  const W={}; D.mentions.edges.forEach(e=>{(W[e.source]=W[e.source]||{})[e.target]=e.weight;});
+  const at=(a,b)=>(W[a]||{})[b]||0;
+  const out=a=>allIds.reduce((s,b)=>s+at(a,b),0);
+  const inc=b=>ids.reduce((s,a)=>s+at(a,b),0);
+  const cols=allIds.filter(id=>!silentIds.has(id)||inc(id)>0).sort((a,b)=>inc(b)-inc(a));
+  const rows=[...ids].sort((a,b)=>out(b)-out(a));
+  const maxW=Math.max(...D.mentions.edges.map(e=>e.weight),1);
+  // короткая подпись столбца -- фамилия; «בן גביר» и подобные держим двумя словами
+  const short=id=>{const n=byId[id]?byId[id].name_he:id;const w=n.split(' ');
+    return (w.length>2&&['בן','אבו','אל'].includes(w[w.length-2])?w.slice(-2):w.slice(-1)).join(' ');};
+  const full=id=>byId[id]?byId[id].name_he:id;
+  const tbl=el('table',{class:'hm mx'});
+  const thead=el('tr',{},[el('th',{class:'row',text:'מאזכר ↓ / מאוזכר →'})]);
+  cols.forEach(c=>{const q=silentIds.has(c);
+    const th=el('th',{class:'hcol'+(q?' mute':''),text:short(c)+(q?'*':'')});
+    hov(th,`<b>${full(c)}</b>${byId[c]&&byId[c].party_he?' · '+byId[c].party_he:''}<br>`+
+      `אוזכר ${inc(c)} פעמים בציוצי האחרים`+
+      (q?'<br><span class="tip-lex">אין לו חשבון פעיל ב־X — הוא מופיע כאן רק כמאוזכר, ואין לו שורה משלו</span>':''));
+    thead.append(th);});
+  const thTot=el('th',{class:'hcol',text:'סה״כ מאזכר'});
+  hov(thTot,'סך האזכורים שהוא מפזר על כל האחרים');
+  thead.append(thTot);
+  tbl.append(el('thead',{},[thead]));
+  const tb=el('tbody');
+  rows.forEach(r=>{
+    const tr=el('tr',{},[el('th',{class:'row',text:full(r)})]);
+    cols.forEach(c=>{
+      if(c===r){const cell=el('div',{class:'cell self',text:'—'});
+        hov(cell,`<b>${full(r)}</b><br>אזכור עצמי אינו נספר`);
+        tr.append(el('td',{},[cell]));return;}
+      const w=at(r,c);
+      const cell=el('div',{class:'cell '+seqLevel(w?Math.sqrt(w/maxW):0),text:w||''});
+      hov(cell,w?`<b>${full(r)}</b> → <b>${full(c)}</b><br>${w} ציוצים שבהם הוא מאזכר אותו`
+                :`<b>${full(r)}</b> → <b>${full(c)}</b><br>אף אזכור בחלון הקמפיין`);
+      tr.append(el('td',{},[cell]));
+    });
+    tr.append(el('td',{},[el('div',{class:'cell tot serif',text:out(r)})]));
+    tb.append(tr);
+  });
+  tbl.append(tb);
+  const totRow=el('tr',{},[el('th',{class:'row',text:'סה״כ אוזכר'})]);
+  cols.forEach(c=>totRow.append(el('td',{},[el('div',{class:'cell tot serif',text:inc(c)})])));
+  totRow.append(el('td',{},[el('div',{class:'cell'})]));
+  tb.append(totRow);
+  sec.append(el('div',{class:'scroll'},[tbl]),
+    el('p',{class:'fig-note',html:'איור 4 — אזכור אינו התקפה: הטון אינו נמדד כאן, רק מי גורר את מי אל תוך השיחה. '+
+      'הזיהוי לפי שם, כינוי מקובל ותגית (@). עמודות המסומנות ב־* הן פוליטיקאים ללא חשבון פעיל ב־X: '+
+      'הם מאוזכרים אך אינם מצייצים, ולכן אין להם שורה. כך נכנסים לתמונה מנהיגי המפלגות החרדיות — '+
+      'אריה דרעי (ש״ס), משה גפני ויצחק גולדקנופף (יהדות התורה) — וגם מנצור עבאס (רע״ם), '+
+      'שציוצו האחרון היה ב־30 ביוני, לפני חלון הקמפיין.'}));
   // exhibit: top viral tweet overall
   const top=[...D.politicians].filter(p=>p.viral&&p.viral.text)
     .sort((a,b)=>(b.viral.likes||0)-(a.viral.likes||0))[0];
@@ -479,7 +550,8 @@ function attackProgram(){
   const sec=el('section',{class:'sec'});
   sec.append(el('div',{class:'label',text:'התקפה או תוכנית'}),
     el('h2',{class:'sh serif',text:'מי מאשים, ומי מבטיח'}),
-    el('p',{class:'sub',html:'אחוז הציוצים עם שפת האשמה (<span style="color:var(--clay)">כתום</span>) מול שפת הבטחה (<span style="color:var(--blue)">כחול</span>). האמצע — אפס.'}));
+    el('p',{class:'sub',html:'אחוז הציוצים העצמיים עם שפת האשמה (<span style="color:var(--clay)">כתום</span>) מול שפת הבטחה (<span style="color:var(--blue)">כחול</span>). האמצע — אפס. שני לקסיקונים סגורים, ואלה המילים שבהם:'}),
+    el('p',{class:'sub',html:'<b>האשמה</b> '+rhetEx('attack')+'<b>הבטחה</b> '+rhetEx('program')}));
   sec.append(el('div',{class:'bf-head'},[el('span',{class:'a',text:'◀ התקפה'}),el('span',{class:'p',text:'תוכנית ▶'})]));
   const maxV=Math.max(...D.politicians.flatMap(p=>[p.attack,p.program]),0.3);
   [...D.politicians].sort((a,b)=>(b.attack+b.program)-(a.attack+a.program)).forEach(p=>{
@@ -494,10 +566,13 @@ function attackProgram(){
           el('span',{class:'bf-lab',text:pct(p.program)})]),
       ]),
     ]);
-    hov(row,`<b>${p.name_he}</b><br>התקפה ${pct(p.attack)} · תוכנית ${pct(p.program)}`);
+    hov(row,`<b>${p.name_he}</b><br>`+
+      `התקפה ${pct(p.attack)} — ${Math.round(p.attack*p.own)} ציוצים<br>`+
+      `תוכנית ${pct(p.program)} — ${Math.round(p.program*p.own)} ציוצים<br>`+
+      `מתוך ${p.own} ציוצים עצמיים`);
     sec.append(row);
   });
-  sec.append(el('p',{class:'fig-note',text:'איור 5 — שני מדדים לקסיקליים על פני הציוצים העצמיים.'}));
+  sec.append(el('p',{class:'fig-note',text:'איור 5 — שני מדדים לקסיקליים על פני הציוצים העצמיים: נמדדת נוכחות מילה מהרשימה, לא משמעות. אירוניה או ציטוט של היריב נספרים כאילו נאמרו ברצינות.'}));
   return sec;
 }
 
@@ -506,7 +581,8 @@ function weThey(){
   const sec=el('section',{class:'sec'});
   sec.append(el('div',{class:'label',text:'אנחנו והם'}),
     el('h2',{class:'sh serif',text:'שפה מאחדת מול שפת עימות'}),
-    el('p',{class:'sub',text:'יחס כינויי «אנחנו» ל«הם». גבוה — שפה מאחדת; נמוך — שפת עימות.'}));
+    el('p',{class:'sub',text:'יחס אזכורי כינויי גוף ראשון־רבים לשלישי־רבים. גבוה — שפה מאחדת; נמוך — שפת עימות.'}),
+    el('p',{class:'sub',html:'<b>אנחנו</b> '+rhetEx('we_words')+'<b>הם</b> '+rhetEx('they_words')}));
   const rows=[...D.politicians].map(p=>({p,r:p.we/Math.max(1,p.they)})).sort((a,b)=>b.r-a.r);
   const max=Math.max(...rows.map(x=>x.r))||1; const body=el('div',{class:'lb'});
   rows.forEach(({p,r})=>{const w=Math.max(3,r/max*100);
@@ -518,7 +594,8 @@ function weThey(){
         el('div',{class:'lb-fill',style:`width:${w}%;background:${r>=1?'var(--olive)':'var(--clay)'}`})])]),
       el('div',{class:'lb-val serif',text:r.toFixed(1)}),
     ]);
-    hov(row,`<b>${p.name_he}</b><br>אנחנו ${p.we} / הם ${p.they}`);
+    hov(row,`<b>${p.name_he}</b><br>אזכורי «אנחנו» ${p.we} · אזכורי «הם» ${p.they}<br>`+
+      `היחס: <b>${r.toFixed(2)}</b>`);
     body.append(row);
   });
   sec.append(body);
