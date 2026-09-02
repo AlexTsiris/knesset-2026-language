@@ -166,7 +166,7 @@
     </div>
 
     <div class="hero">
-      <h1 class="head serif">כולם מדברים על נתניהו.<br><span class="em">הוא כמעט לא מגיב.</span></h1>
+      <h1 class="head serif">שפת הקמפיין,<br><span class="em">מילה במילה</span></h1>
       <p class="dek">ניתחנו 1,242 ציוצים של 12 ראשי מפלגות מאז פיזור הכנסת. הנתונים חושפים את שפת הקמפיין — מי תוקף, מי מבטיח, ואיזו מילה אחת מסגירה כל אחד מהם.</p>
       <div class="byline">
         <span><b>מפת שפה</b> · ניתוח עצמאי</span>
@@ -219,7 +219,7 @@
       <div class="fp-row">
         <img class="fp-ava" src="ben_gvir.jpg" alt="">
         <div><div class="fp-nm">איתמר בן גביר</div><div class="fp-pt">עוצמה יהודית</div></div>
-        <div><span class="fp-word serif">סגל</span><span class="fp-x">×72</span></div>
+        <div><span class="fp-word serif">משטרה</span><span class="fp-x">×12</span></div>
       </div>
       <div class="fp-row">
         <img class="fp-ava" src="lapid.jpg" alt="">
@@ -284,8 +284,8 @@
     <!-- §3 gravity -->
     <div class="sec">
       <div class="label">מרכז הכובד</div>
-      <h2 class="sh serif">הכול סובב סביב איש אחד</h2>
-      <p class="sub">נתניהו תוקף הכי מעט — רק 2% מציוציו נושאים שפת האשמה. ובכל זאת מאזכרים אותו יותר מכולם: פי 2.2 מהמתמודד הבא, גדי איזנקוט. האופוזיציה כולה מסתובבת סביבו, והבחירות הן, למעשה, משאל עַם עליו.</p>
+      <h2 class="sh serif">מי מאזכר את מי, וכמה</h2>
+      <p class="sub">נתניהו תוקף הכי מעט — רק 2% מציוציו נושאים שפת האשמה. ובכל זאת מאזכרים אותו יותר מכולם: פי 2.2 מהמתמודד הבא, גדי איזנקוט. רוב האזכורים מגיעים מהאופוזיציה.</p>
       <div class="mn">
         <div class="mn-row"><div class="mn-nm">בנימין נתניהו</div><div class="mn-track"><div class="mn-fill lead" style="width:100%"></div></div><div class="mn-val serif">139</div></div>
         <div class="mn-row"><div class="mn-nm">גדי איזנקוט</div><div class="mn-track"><div class="mn-fill" style="width:44.6%"></div></div><div class="mn-val serif">62</div></div>
@@ -389,7 +389,7 @@ class Component extends DCLogic {
       per_day:"ציוצים ליום בחלון הקמפיין (כלל הציוצים חלקי מספר הימים).",
       attack:"אחוז הציוצים העצמיים הנושאים שפת האשמה: שקר, כישלון, בושה.",
       program:"אחוז הציוצים העצמיים הנושאים שפת הבטחה: נקדם, נבנה, תוכנית.",
-      wt:"יחס כינויי «אנחנו» ל«הם». גבוה = שפת ליכוד; נמוך = שפת עימות.",
+      wt:"יחס כינויי «אנחנו» ל«הם». גבוה = שפה מאחדת; נמוך = שפת עימות.",
     }[k];
     const bfRows = this.data().slice().sort((a,b)=>(b.attack+b.program)-(a.attack+a.program));
     const bfMax = Math.max.apply(null, bfRows.flatMap(p=>[p.attack,p.program]).concat([0.3]));
