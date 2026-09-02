@@ -13,3 +13,6 @@ config/cookies/
 !data/processed/.gitkeep
 !outputs/.gitkeep
 !config/cookies/.gitkeep
+
+# собранный дизайн-канвас (2МБ, пересобирается из Main.dc.html)
+shafat-hakampein.html
