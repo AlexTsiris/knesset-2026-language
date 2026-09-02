@@ -4,216 +4,255 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>שפת הקמפיין · בחירות 2026</title>
-<meta name="description" content="ניתוח תדירות של ציוצי מנהיגי המפלגות בישראל בתקופת מערכת הבחירות 2026.">
+<meta name="description" content="ניתוח תדירות של ציוצי מנהיגי המפלגות בישראל בתקופת מערכת הבחירות 2026 — מי תוקף, מי מבטיח, ואיזו מילה מסגירה כל אחד.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@300;400;500;700&display=swap">
 <style>
 :root{
   color-scheme:light;
-  --surface-1:#fcfcfb; --page:#f4f3f0;
-  --ink-1:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
-  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
-  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
-  --warn:#eda100; --crit:#e34948;
-  --shadow:0 1px 2px rgba(11,11,11,.05),0 6px 20px rgba(11,11,11,.05);
+  --paper:#f6f1e8; --panel:#fffdf7; --ink:#211c16; --ink2:#5b5348;
+  --muted:#948a7b; --rule:#e2d9c8; --rule2:#cfc4ae;
+  --blue:#2f6d80; --clay:#b0553c; --olive:#5f7449; --gold:#9a7433;
+  --shadow:0 1px 2px rgba(33,28,22,.04),0 8px 24px rgba(33,28,22,.06);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   color-scheme:dark;
-  --surface-1:#1a1a19; --page:#0d0d0d;
-  --ink-1:#fff; --ink-2:#c3c2b7; --ink-muted:#898781;
-  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
-  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
-  --warn:#c98500; --crit:#e66767;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  --paper:#181511; --panel:#211d18; --ink:#f3ece0; --ink2:#c3b8a6;
+  --muted:#8f8574; --rule:#332d24; --rule2:#463d30;
+  --blue:#5fa3b6; --clay:#d8836a; --olive:#8ba471; --gold:#c69a55;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.4);
 }}
 :root[data-theme=dark]{
   color-scheme:dark;
-  --surface-1:#1a1a19; --page:#0d0d0d;
-  --ink-1:#fff; --ink-2:#c3c2b7; --ink-muted:#898781;
-  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
-  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
-  --warn:#c98500; --crit:#e66767;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  --paper:#181511; --panel:#211d18; --ink:#f3ece0; --ink2:#c3b8a6;
+  --muted:#8f8574; --rule:#332d24; --rule2:#463d30;
+  --blue:#5fa3b6; --clay:#d8836a; --olive:#8ba471; --gold:#c69a55;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--page);color:var(--ink-1);
-  font:15px/1.6 "Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased}
-.wrap{max-width:1180px;margin:0 auto;padding:0 20px 90px}
-a{color:var(--s1)}
-h1{font-size:clamp(26px,4vw,40px);line-height:1.12;margin:0 0 10px;letter-spacing:-.01em}
-h2{font-size:22px;margin:0 0 4px}
-h3{font-size:14px;margin:0 0 10px;color:var(--ink-2);font-weight:600}
-.muted{color:var(--ink-muted)}
-.sec{margin:56px 0 0}
-.sec-intro{color:var(--ink-2);font-size:14px;margin:2px 0 18px;max-width:76ch}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Heebo","Segoe UI",system-ui,sans-serif;line-height:1.7;
+  -webkit-font-smoothing:antialiased;direction:rtl}
+.serif{font-family:"Frank Ruhl Libre",Georgia,serif}
+.wrap{max-width:780px;margin:0 auto;padding:0 clamp(16px,5vw,40px) 90px}
+a{color:var(--clay);text-decoration:none}a:hover{color:#8f4531}
 .en{direction:ltr;unicode-bidi:isolate;display:inline-block}
-.card{background:var(--surface-1);border:1px solid var(--border);
-  border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+.muted{color:var(--muted)}
 
-/* ---- hero ---- */
-header{padding:52px 0 8px}
-.eyebrow{color:var(--s1);font-weight:700;font-size:13px;letter-spacing:.02em;
-  margin:0 0 14px}
-.lede{color:var(--ink-2);font-size:17.5px;max-width:72ch;margin:0 0 6px}
-.disclaimer{color:var(--ink-muted);font-size:13.5px;max-width:76ch;margin:14px 0 0}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:12px;margin:28px 0 0}
-.tile{background:var(--surface-1);border:1px solid var(--border);
-  border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
-.tile .v{font-size:30px;font-weight:700;letter-spacing:-.02em}
-.tile .k{font-size:13px;color:var(--ink-2);margin-top:3px}
+/* topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0 0;max-width:780px;margin:0 auto;padding-inline:clamp(16px,5vw,40px)}
+.brand{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.tbtn{border:1px solid var(--rule2);background:var(--panel);color:var(--ink2);
+  cursor:pointer;font:inherit;font-size:12.5px;padding:6px 12px;border-radius:2px}
+.tbtn:hover{color:var(--ink)}
 
-/* ---- controls ---- */
-.controls{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 16px;align-items:center}
-.seg{display:inline-flex;background:var(--surface-1);border:1px solid var(--border);
-  border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap;box-shadow:var(--shadow)}
-.seg button{border:0;background:transparent;color:var(--ink-2);cursor:pointer;
-  font:inherit;font-size:13.5px;padding:6px 13px;border-radius:7px;white-space:nowrap}
-.seg button:hover{color:var(--ink-1)}
-.seg button[aria-pressed=true]{background:var(--s1);color:#fff}
-.hint-inline{color:var(--ink-muted);font-size:13px}
+/* masthead + hero */
+.masthead{border-top:3px double var(--rule2);border-bottom:1px solid var(--rule);
+  padding:12px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.kicker{font-size:clamp(11px,2.5vw,12.5px);font-weight:700;letter-spacing:.13em;color:var(--clay);text-transform:uppercase}
+.masthead .date{font-size:12.5px;color:var(--muted)}
+.hero{padding:clamp(30px,6vw,48px) 0 8px}
+h1.head{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+  font-size:clamp(32px,8.5vw,64px);line-height:1.05;letter-spacing:-.01em;margin:0 0 20px}
+.head .em{color:var(--clay)}
+.dek{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:500;font-style:italic;
+  font-size:clamp(18px,4.5vw,23px);line-height:1.5;color:var(--ink2);margin:0 0 24px}
+.byline{display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  padding:12px 0;font-size:13px;color:var(--ink2)}
+.byline b{color:var(--ink);font-weight:700}
+.byline .dot{width:3px;height:3px;border-radius:50%;background:var(--muted)}
+.lead{font-size:clamp(16px,4vw,19px);line-height:1.85;margin:28px 0 6px;color:var(--ink)}
+.lead .dropcap{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+  float:right;font-size:clamp(56px,15vw,74px);line-height:.72;margin:8px 12px 0 0;color:var(--clay)}
 
-/* ---- leaderboard ---- */
-.lb{display:flex;flex-direction:column;gap:2px}
-.lb-row{display:grid;grid-template-columns:32px 176px 1fr 76px;gap:12px;
-  align-items:center;padding:7px 8px;border-radius:10px;transition:background .15s}
-.lb-row:hover{background:color-mix(in srgb,var(--s1) 7%,transparent)}
-.rank{color:var(--ink-muted);font-size:13px;text-align:center;font-variant-numeric:tabular-nums}
-.who{display:flex;align-items:center;gap:10px;min-width:0}
-.ava{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:none;
-  border:1px solid var(--border);background:var(--grid)}
-.who .nm{font-size:14px;font-weight:600;line-height:1.15;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap}
-.who .pt{font-size:12px;color:var(--ink-muted);overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap}
-.lb-track{background:var(--grid);border-radius:6px;height:16px;overflow:hidden;position:relative}
-.lb-fill{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1);min-width:3px}
-.lb-val{text-align:left;font-variant-numeric:tabular-nums;font-size:14px;font-weight:700}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin:32px 0;
+  border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.stat{padding:18px 14px;border-inline-start:1px solid var(--rule)}
+.stat:first-child{border-inline-start:0}
+.stat .n{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+  font-size:clamp(28px,7vw,40px);line-height:1;color:var(--ink)}
+.stat .l{font-size:12px;color:var(--ink2);margin-top:6px;line-height:1.35}
+@media (max-width:560px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stat:nth-child(2){border-inline-start:0}
+  .stat:nth-child(3),.stat:nth-child(4){border-top:1px solid var(--rule)}
+}
 
-/* ---- fingerprint cards ---- */
-.fp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:14px}
-.fp-head{display:flex;align-items:center;gap:11px;margin-bottom:12px}
-.fp-head .ava{width:46px;height:46px}
-.fp-head .nm{font-size:16px;font-weight:700;line-height:1.1}
-.fp-head .pt{font-size:12px;color:var(--ink-muted)}
-.fp-word{font-size:30px;font-weight:800;letter-spacing:-.01em;margin:2px 0}
-.fp-word .x{font-size:14px;color:var(--s2);font-weight:700;margin-inline-start:8px}
-.fp-sub{font-size:12.5px;color:var(--ink-muted);margin-bottom:10px}
-.chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{border:1px solid var(--border);border-radius:6px;padding:3px 9px;
-  background:var(--page);font-size:14px}
-.chip b{color:var(--ink-muted);font-weight:600;font-size:11px;margin-inline-start:6px;
-  font-variant-numeric:tabular-nums}
+/* section chrome */
+.sec{margin:clamp(44px,9vw,58px) 0 0}
+.label{font-size:12px;font-weight:700;letter-spacing:.13em;color:var(--clay);
+  text-transform:uppercase;margin:0 0 8px;display:flex;align-items:center;gap:10px}
+.label::after{content:"";height:1px;background:var(--rule2);flex:1}
+h2.sh{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;
+  font-size:clamp(24px,6vw,32px);line-height:1.15;margin:0 0 8px}
+.sub{font-size:clamp(14px,3.6vw,16px);color:var(--ink2);margin:0 0 20px;line-height:1.65}
+.fig-note{font-size:12.5px;color:var(--muted);margin-top:14px;font-style:italic}
 
-/* ---- heatmap ---- */
-.scroll{overflow-x:auto}
-.hm{border-collapse:separate;border-spacing:0;width:100%;font-size:12px;min-width:660px}
-.hm th{color:var(--ink-2);font-weight:600;font-size:11.5px;padding:0 4px 8px;
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:6px}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--rule2);
+  border-radius:2px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--ink2);cursor:pointer;
+  font:inherit;font-size:13px;font-weight:500;padding:7px 13px;border-radius:1px;white-space:nowrap}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.seg-desc{font-size:13px;color:var(--muted);margin:8px 0 16px;min-height:19px}
+
+/* leaderboard */
+.lb{display:flex;flex-direction:column}
+.lb-row{display:grid;grid-template-columns:26px 42px 1fr minmax(90px,200px) 60px;gap:12px;
+  align-items:center;padding:11px 0;border-bottom:1px solid var(--rule)}
+.lb-row:first-child{border-top:1px solid var(--rule2)}
+.lb-rank{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:16px;color:var(--muted);text-align:center}
+.ava{width:42px;height:42px;border-radius:50%;object-fit:cover;flex:none;
+  border:1px solid var(--rule2);background:var(--rule);filter:grayscale(.12)}
+.lb-nm{font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.2;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-pt{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-track{background:var(--rule);border-radius:1px;height:19px;overflow:hidden}
+.lb-fill{height:100%;transition:width .55s cubic-bezier(.4,0,.2,1);min-width:3px}
+.lb-val{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:18px;text-align:left;color:var(--ink)}
+@media (max-width:520px){
+  .lb-row{grid-template-columns:22px 36px 1fr 52px}
+  .lb-track-wrap{display:none}
+  .ava{width:36px;height:36px}
+}
+
+/* fingerprints */
+.fp-row{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;
+  padding:14px 0;border-bottom:1px solid var(--rule)}
+.fp-row:first-child{border-top:2px solid var(--ink)}
+.fp-ava{width:52px;height:52px;border-radius:50%;object-fit:cover;border:1px solid var(--rule2);filter:grayscale(.12)}
+.fp-nm{font-size:15px;font-weight:700;color:var(--ink)}
+.fp-pt{font-size:12px;color:var(--muted)}
+.fp-word{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+  font-size:clamp(24px,7vw,34px);line-height:1;color:var(--ink);text-align:left}
+.fp-x{font-size:12.5px;font-weight:700;color:var(--clay);margin-inline-start:9px}
+@media (max-width:420px){.fp-row{grid-template-columns:44px 1fr auto;gap:11px}.fp-ava{width:44px;height:44px}}
+
+/* heatmap */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.hm{border-collapse:separate;border-spacing:0;width:100%;font-size:12px;min-width:640px}
+.hm th{color:var(--ink2);font-weight:600;font-size:11.5px;padding:0 4px 8px;
   vertical-align:bottom;text-align:center;white-space:nowrap}
 .hm th.row{text-align:start;font-weight:700;font-size:12.5px;padding-inline-end:10px;white-space:nowrap}
 .hm td{padding:2px}
-.cell{height:30px;border-radius:6px;display:flex;align-items:center;
-  justify-content:center;font-variant-numeric:tabular-nums;cursor:default;transition:transform .1s}
-.cell:hover{transform:scale(1.12);outline:2px solid var(--ink-1);z-index:2;position:relative}
-.lv0{background:var(--grid);color:var(--ink-muted)}
-.lv1{background:#cde2fb;color:#0b0b0b}.lv2{background:#9ec5f4;color:#0b0b0b}
-.lv3{background:#6da7ec;color:#0b0b0b}.lv4{background:#3987e5;color:#fff}
-.lv5{background:#256abf;color:#fff}.lv6{background:#184f95;color:#fff}
-.lv7{background:#0d366b;color:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .lv1{background:#0d366b;color:#fff}
-  :root:not([data-theme=light]) .lv2{background:#184f95;color:#fff}
-  :root:not([data-theme=light]) .lv3{background:#256abf;color:#fff}
-  :root:not([data-theme=light]) .lv4{background:#3987e5;color:#0b0b0b}
-  :root:not([data-theme=light]) .lv5{background:#6da7ec;color:#0b0b0b}
-  :root:not([data-theme=light]) .lv6{background:#9ec5f4;color:#0b0b0b}
-  :root:not([data-theme=light]) .lv7{background:#cde2fb;color:#0b0b0b}}
-:root[data-theme=dark] .lv1{background:#0d366b;color:#fff}
-:root[data-theme=dark] .lv2{background:#184f95;color:#fff}
-:root[data-theme=dark] .lv3{background:#256abf;color:#fff}
-:root[data-theme=dark] .lv4{background:#3987e5;color:#0b0b0b}
-:root[data-theme=dark] .lv5{background:#6da7ec;color:#0b0b0b}
-:root[data-theme=dark] .lv6{background:#9ec5f4;color:#0b0b0b}
-:root[data-theme=dark] .lv7{background:#cde2fb;color:#0b0b0b}
+.cell{height:29px;border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-variant-numeric:tabular-nums;cursor:default;transition:transform .1s}
+.cell:hover{transform:scale(1.1);outline:2px solid var(--ink);z-index:2;position:relative}
+.lv0{background:var(--rule);color:var(--muted)}
+.lv1{background:#e4ede9;color:#22322c}.lv2{background:#c3d9cf;color:#22322c}
+.lv3{background:#8fbcae;color:#12261f}.lv4{background:#4f9384;color:#fff}
+.lv5{background:#2f6d80;color:#fff}.lv6{background:#265a6a;color:#fff}
+.lv7{background:#1d4451;color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .lv1{background:#1d4451;color:#eaf3f0}
+  :root:not([data-theme=light]) .lv2{background:#265a6a;color:#eaf3f0}
+  :root:not([data-theme=light]) .lv3{background:#2f6d80;color:#fff}
+  :root:not([data-theme=light]) .lv4{background:#4f9384;color:#0f1f1a}
+  :root:not([data-theme=light]) .lv5{background:#8fbcae;color:#0f1f1a}
+  :root:not([data-theme=light]) .lv6{background:#c3d9cf;color:#0f1f1a}
+  :root:not([data-theme=light]) .lv7{background:#e4ede9;color:#0f1f1a}}
+:root[data-theme=dark] .lv1{background:#1d4451;color:#eaf3f0}
+:root[data-theme=dark] .lv2{background:#265a6a;color:#eaf3f0}
+:root[data-theme=dark] .lv3{background:#2f6d80;color:#fff}
+:root[data-theme=dark] .lv4{background:#4f9384;color:#0f1f1a}
+:root[data-theme=dark] .lv5{background:#8fbcae;color:#0f1f1a}
+:root[data-theme=dark] .lv6{background:#c3d9cf;color:#0f1f1a}
+:root[data-theme=dark] .lv7{background:#e4ede9;color:#0f1f1a}
 
-/* ---- diverging ---- */
-.dv-row{display:grid;grid-template-columns:170px 1fr;gap:12px;align-items:center;
-  padding:5px 6px;border-radius:10px}
-.dv-row:hover{background:color-mix(in srgb,var(--s1) 6%,transparent)}
-.dv-who{display:flex;align-items:center;gap:9px;min-width:0}
-.dv-who .ava{width:30px;height:30px}
-.dv-who .nm{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dv-bars{display:flex;align-items:center}
-.dv-half{height:15px;display:flex;align-items:center;overflow:hidden}
-.dv-left{justify-content:flex-end}
-.dv-mid{width:1px;background:var(--axis);height:22px;flex:none}
-.dv-seg{height:100%;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.dv-lab{font-size:11.5px;color:var(--ink-2);padding:0 6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* butterfly */
+.bf-head{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:10px}
+.bf-head .a{color:var(--clay)}.bf-head .p{color:var(--blue)}
+.bf-row{display:grid;grid-template-columns:clamp(90px,26vw,120px) 1fr;gap:12px;align-items:center;padding:6px 0}
+.bf-nm{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bf-bars{display:flex;align-items:center}
+.bf-half{height:17px;display:flex;align-items:center;overflow:hidden}
+.bf-l{justify-content:flex-end}
+.bf-mid{width:1px;height:25px;background:var(--rule2);flex:none}
+.bf-seg{height:100%}
+.bf-lab{font-size:11px;color:var(--ink2);padding:0 6px;white-space:nowrap}
 
-/* ---- viral ---- */
-.vir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(325px,1fr));gap:14px}
+/* pull quote + exhibit */
+.pull{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-style:italic;
+  font-size:clamp(22px,6vw,30px);line-height:1.32;color:var(--ink);text-align:center;
+  margin:clamp(34px,7vw,46px) auto;max-width:600px}
+.pull .mk{color:var(--clay)}
+.exhibit{background:var(--panel);border:1px solid var(--rule2);border-radius:3px;
+  padding:22px clamp(18px,5vw,26px);margin:22px 0}
+.exhibit .ex-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.exhibit .ex-ava{width:46px;height:46px;border-radius:50%;object-fit:cover}
+.exhibit .ex-nm{font-size:15px;font-weight:700}
+.exhibit .ex-hd{font-size:12px;color:var(--muted)}
+.exhibit .ex-txt{font-family:"Frank Ruhl Libre",Georgia,serif;font-size:clamp(18px,4.6vw,22px);line-height:1.5}
+.exhibit .ex-txt.ltr{direction:ltr;unicode-bidi:isolate;text-align:left}
+.exhibit .ex-meta{display:flex;align-items:center;gap:6px;margin-top:13px;font-size:12.5px;color:var(--ink2);font-weight:500;flex-wrap:wrap}
+.exhibit .ex-meta svg{width:15px;height:15px;color:var(--clay)}
+
+/* viral + corpus grids */
+.vir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.vir-card{background:var(--panel);border:1px solid var(--rule2);border-radius:3px;padding:18px 20px}
 .vir-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.vir-head .ava{width:40px;height:40px}
-.vir-head .nm{font-size:14.5px;font-weight:700}
-.vir-head .likes{margin-inline-start:auto;font-size:14px;font-weight:700;color:var(--s2)}
-.vir-text{font-size:14.5px;line-height:1.55}
+.vir-head .ava{width:38px;height:38px}
+.vir-head .nm{font-size:14px;font-weight:700}
+.vir-head .likes{margin-inline-start:auto;font-size:13.5px;font-weight:700;color:var(--clay)}
+.vir-text{font-family:"Frank Ruhl Libre",Georgia,serif;font-size:15.5px;line-height:1.55}
 .vir-text.ltr{direction:ltr;unicode-bidi:isolate;text-align:left}
-.vir-meta{color:var(--ink-muted);font-size:12px;margin-top:9px}
+.vir-meta{color:var(--muted);font-size:11.5px;margin-top:9px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{border:1px solid var(--rule2);border-radius:2px;padding:3px 9px;background:var(--paper);font-size:14px}
+.chip b{color:var(--muted);font-weight:600;font-size:11px;margin-inline-start:6px;font-variant-numeric:tabular-nums}
+.corpus-card h3{font-family:"Frank Ruhl Libre",serif;font-size:16px;font-weight:700;margin:0 0 10px}
 
-/* ---- corpus ---- */
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+/* mentions extra list */
+.mn-list{display:flex;flex-direction:column;margin-top:6px}
+.mn-row{display:grid;grid-template-columns:clamp(110px,30vw,150px) 1fr 44px;gap:12px;align-items:center;padding:8px 0}
+.mn-nm{font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mn-track{height:22px;background:transparent}
+.mn-fill{height:100%;background:var(--blue);border-radius:1px}
+.mn-fill.lead{background:var(--clay)}
+.mn-val{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:16px;text-align:left}
 
-/* ---- tooltip ---- */
-#tip{position:fixed;z-index:99;pointer-events:none;background:var(--ink-1);
-  color:var(--page);font-size:13px;line-height:1.45;padding:7px 11px;border-radius:8px;
-  max-width:270px;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .1s;
-  font-variant-numeric:tabular-nums}
-#tip.on{opacity:1}
-
-/* ---- methodology ---- */
+/* methodology */
 details{margin-top:12px}
-summary{cursor:pointer;color:var(--ink-2);font-size:13.5px;font-weight:600;
-  padding:10px 14px;background:var(--surface-1);border:1px solid var(--border);
-  border-radius:10px;list-style:none}
+summary{cursor:pointer;color:var(--ink2);font-size:13px;font-weight:600;
+  padding:11px 14px;background:var(--panel);border:1px solid var(--rule2);border-radius:2px;list-style:none}
 summary::-webkit-details-marker{display:none}
-summary::before{content:"▸ ";color:var(--ink-muted)}
+summary::before{content:"▸ ";color:var(--muted)}
 details[open] summary::before{content:"▾ "}
-.meth-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
-.meth-table th,.meth-table td{text-align:start;padding:8px 10px;
-  border-bottom:1px solid var(--grid);vertical-align:top}
-.meth-table th{color:var(--ink-2);font-size:11.5px}
-.meth-table code{font-size:11px;color:var(--ink-muted);direction:ltr;unicode-bidi:isolate}
+.meth-note{border-top:1px solid var(--rule);margin-top:8px;padding-top:16px;
+  font-size:13.5px;line-height:1.7;color:var(--ink2)}
+.meth-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+.meth-table th,.meth-table td{text-align:start;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+.meth-table th{color:var(--ink2);font-size:11px}
+.meth-table code{font-size:11px;color:var(--muted);direction:ltr;unicode-bidi:isolate;display:inline-block}
 
-/* ---- topbar/footer ---- */
-.topbar{display:flex;align-items:center;justify-content:space-between;
-  padding:16px 0 0;position:sticky;top:0;z-index:10;
-  background:linear-gradient(var(--page) 70%,transparent)}
-.brand{font-size:13px;font-weight:600;color:var(--ink-2)}
-.tbtn{border:1px solid var(--border);background:var(--surface-1);color:var(--ink-2);
-  cursor:pointer;font:inherit;font-size:13px;padding:6px 13px;border-radius:9px}
-.tbtn:hover{color:var(--ink-1)}
-footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--grid);
-  color:var(--ink-muted);font-size:13px}
-footer a{color:var(--ink-2)}
-.loading{padding:80px 0;text-align:center;color:var(--ink-muted)}
-@media (max-width:560px){
-  .lb-row{grid-template-columns:26px 1fr 64px}
-  .lb-row .lb-track-wrap{display:none}
-  .dv-row{grid-template-columns:120px 1fr}
-}
+.colophon{border-top:3px double var(--rule2);margin-top:40px;padding:20px 0 8px;
+  font-size:12.5px;color:var(--muted);text-align:center;line-height:1.7}
+.colophon a{color:var(--ink2)}
+
+/* tooltip */
+#tip{position:fixed;z-index:99;pointer-events:none;background:var(--ink);color:var(--paper);
+  font-size:12.5px;line-height:1.45;padding:7px 11px;border-radius:4px;max-width:250px;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .1s;font-variant-numeric:tabular-nums}
+#tip.on{opacity:1}
+.loading{padding:90px 20px;text-align:center;color:var(--muted)}
 </style>
 </head>
 <body>
 <div id="tip"></div>
-<div class="wrap">
-  <div class="topbar">
-    <span class="brand">כנסת 2026 · מפת שפה</span>
-    <button class="tbtn" id="themeBtn" aria-label="החלף ערכת נושא">◐ ערכת נושא</button>
-  </div>
-  <div id="app"><div class="loading">טוען נתונים…</div></div>
+<div class="topbar">
+  <span class="brand">כנסת 2026 · מפת שפה</span>
+  <button class="tbtn" id="themeBtn" aria-label="החלף ערכת נושא">◐ ערכת נושא</button>
 </div>
+<div class="wrap"><div id="app"><div class="loading">טוען נתונים…</div></div></div>
 
 <script>
-const PALETTE=['#2a78d6','#eb6834','#1baf7a'];
 const $=(s,el=document)=>el.querySelector(s);
 const el=(tag,attrs={},kids=[])=>{
   const e=document.createElement(tag);
@@ -225,14 +264,15 @@ const el=(tag,attrs={},kids=[])=>{
   (Array.isArray(kids)?kids:[kids]).forEach(k=>k!=null&&e.append(k.nodeType?k:document.createTextNode(k)));
   return e;
 };
-// LRI…PDI изолирует число как LTR-рун: иначе в RTL пробел-разделитель тысяч
-// рвёт «64 102» на группы, и они меняются местами («102 64»). Символы
-// невидимы и работают и в тексте, и в подсказках.
 const lri=s=>'⁦'+s+'⁩';
 const pct=x=>lri(Math.round(x*100)+'%');
 const sp=n=>lri(String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' '));
 const photo=id=>`assets/photos/${id}.jpg`;
 const isHe=s=>/[֐-׿]/.test(s||'');
+// для газетного экспоната: убираем URL и эмодзи/флаги, схлопываем пробелы
+const cleanTweet=t=>(t||'').replace(/https?:\/\/\S+/g,'')
+  .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}️‍]/gu,'')
+  .replace(/\s+/g,' ').trim();
 
 const tip=$('#tip');
 function showTip(html,x,y){tip.innerHTML=html;tip.classList.add('on');
@@ -254,135 +294,129 @@ function hov(node,html){node.addEventListener('mousemove',e=>showTip(html,e.clie
   });})();
 
 fetch('data.json').then(r=>r.json()).then(render).catch(e=>{
-  $('#app').innerHTML='<div class="loading">שגיאה בטעינת data.json. פִּתחו את הדף דרך שרת (GitHub Pages).</div>';
-  console.error(e);});
+  $('#app').innerHTML='<div class="loading">שגיאה בטעינת הנתונים. פתחו את הדף דרך שרת (GitHub Pages).</div>';console.error(e);});
 
 let D,byId;
 function render(data){
   D=data; byId=Object.fromEntries(D.politicians.map(p=>[p.id,p]));
   const app=$('#app'); app.innerHTML='';
-  app.append(hero(),leaderboard(),fingerprints(),topicsHeat(),
-    attackProgram(),weThey(),mentions(),viral(),corpus(),methodology(),footer());
+  app.append(hero(),leaderboard(),fingerprints(),topicsHeat(),gravity(),
+    attackProgram(),weThey(),viral(),corpus(),methodology(),footer());
 }
+
+function seqLevel(v){if(v<=0)return 'lv0';return 'lv'+Math.min(7,1+Math.floor(v*7));}
 
 // ===== HERO =====
 function hero(){
   const m=D.meta;
   const dLeft=Math.max(0,Math.round((new Date(m.election_day)-new Date(m.campaign_end))/864e5));
-  const wrap=el('header');
+  const ntalk=(D.mentions.most_talked[0]||[null,0])[1];
+  const wrap=el('div');
   wrap.append(
-    el('p',{class:'eyebrow',text:'בחירות לכנסת · 27 באוקטובר 2026'}),
-    el('h1',{text:'על מה — ואיך — מדברים ראשי המפלגות'}),
-    el('p',{class:'lede',html:'סקירת תדירות של ציוצי מנהיגי המפלגות בישראל בתקופת מערכת הבחירות. '+
-      'לא הערכה פוליטית — <b>מה</b> ו<b>כמה</b> הם כותבים, אילו מילים מסגירות עמדה, את מי הם מאזכרים.'}),
-    el('p',{class:'disclaimer',html:'ריטוויטים הוצאו ממדדי הטקסט (מילים של אחר). '+
-      'העברית עברה לממטיזציה (stanza): מילה בצורות שונות נספרת כמילה אחת. '+
-      'כל מספר ניתן להוכחה — ראו מתודולוגיה בתחתית. המקור — ציוצים פומביים.'}),
+    el('div',{class:'masthead'},[
+      el('span',{class:'kicker',text:'ניתוח נתונים · מערכת הבחירות 2026'}),
+      el('span',{class:'date',text:'עודכן 1 בספטמבר 2026'})]),
+    el('div',{class:'hero'},[
+      el('h1',{class:'head serif',html:'כולם מדברים על נתניהו.<br><span class="em">הוא כמעט לא מגיב.</span>'}),
+      el('p',{class:'dek',text:'ניתחנו '+sp(m.n_tweets)+' ציוצים של עשרה ראשי מפלגות מאז פיזור הכנסת. הנתונים חושפים את שפת הקמפיין — מי תוקף, מי מבטיח, ואיזו מילה אחת מסגירה כל אחד מהם.'}),
+      el('div',{class:'byline'},[
+        el('span',{html:'<b>מפת שפה</b> · ניתוח עצמאי'}),
+        el('span',{class:'dot'}),el('span',{text:m.days+' ימי קמפיין'}),
+        el('span',{class:'dot'}),el('span',{text:dLeft+' יום לבחירות'}),
+        el('span',{class:'dot'}),el('span',{text:'המקור: ציוצים פומביים'})]),
+    ]),
+    el('p',{class:'lead'},[
+      el('span',{class:'dropcap serif',text:'ר'}),
+      'גע לפני שמערכת הבחירות נכנסת להילוך גבוה, בחנּו כל ציוץ שכתבו עשרה ראשי מפלגות מאז פיזור הכנסת ב־17 ביולי — '+sp(m.n_tweets)+' ציוצים בתוך '+m.days+' ימים. השאלה איננה מי צודק, אלא ',
+      el('em',{text:'מה נאמר וכמה'}),
+      ': אילו מילים חוזרות, מי עסוק בהתקפה ומי בהבטחה, ואת מי כולם גוררים אל תוך השיחה. תבנית אחת חוזרת שוב ושוב — כמעט כל שיחה מובילה בחזרה לאדם אחד.']),
   );
-  const tiles=el('div',{class:'tiles'});
-  [[sp(m.n_tweets),'ציוצים במאגר'],[m.n_politicians,'ראשי מפלגות'],
-   [m.days,'ימי קמפיין'],[dLeft,'ימים עד הבחירות']].forEach(([v,k])=>
-    tiles.append(el('div',{class:'tile'},[el('div',{class:'v',html:v}),el('div',{class:'k',text:k})])));
+  const tiles=el('div',{class:'stats'});
+  [[sp(m.n_tweets),'ציוצים נותחו'],[m.n_politicians,'ראשי מפלגות'],
+   [m.days,'ימי קמפיין'],[sp(ntalk),'אזכורי נתניהו — פי 2.5 מהבא']].forEach(([v,k])=>
+    tiles.append(el('div',{class:'stat'},[el('div',{class:'n serif',html:''+v}),el('div',{class:'l',text:k})])));
   wrap.append(tiles);
   return wrap;
 }
 
 // ===== LEADERBOARD =====
 const LB={
-  per_day:{label:'פעילות',fmt:v=>v.toFixed(1),color:0,
+  per_day:{label:'פעילות',fmt:v=>v.toFixed(1),color:'var(--blue)',
     desc:'ציוצים ליום בחלון הקמפיין (כלל הציוצים חלקי מספר הימים).'},
-  attack:{label:'התקפה',fmt:pct,color:1,
-    desc:'אחוז הציוצים העצמיים עם שפת האשמה (שקר, כישלון, בושה…).'},
-  program:{label:'תוכנית',fmt:pct,color:2,
-    desc:'אחוז הציוצים העצמיים עם שפת הבטחה (נקדם, נבנה, תוכנית…).'},
-  retweet_share:{label:'ריטוויטים',fmt:pct,color:1,
+  attack:{label:'התקפה',fmt:pct,color:'var(--clay)',
+    desc:'אחוז הציוצים העצמיים עם שפת האשמה: שקר, כישלון, בושה.'},
+  program:{label:'תוכנית',fmt:pct,color:'var(--blue)',
+    desc:'אחוז הציוצים העצמיים עם שפת הבטחה: נקדם, נבנה, תוכנית.'},
+  retweet_share:{label:'ריטוויטים',fmt:pct,color:'var(--clay)',
     desc:'אחוז הריטוויטים מכלל הציוצים — הגברת קול של אחר.'},
-  ttr:{label:'גיוון לשוני',fmt:v=>v.toFixed(2),color:2,
+  ttr:{label:'גיוון לשוני',fmt:v=>v.toFixed(2),color:'var(--olive)',
     desc:'מילים ייחודיות חלקי סך המילים (עברית). הוגן להשוואה בנפחים דומים.'},
-  wt:{label:'«אנחנו» / «הם»',fmt:v=>v.toFixed(1),color:0,
-    desc:'יחס כינויי גוף ראשון־רבים לשלישי־רבים. גבוה = שפת ליכוד.'},
+  wt:{label:'«אנחנו» / «הם»',fmt:v=>v.toFixed(1),color:'var(--olive)',
+    desc:'יחס כינויי «אנחנו» ל«הם». גבוה = שפת ליכוד.'},
 };
 const lbVal=(p,k)=>k==='wt'?p.we/Math.max(1,p.they):p[k];
 function leaderboard(){
   const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'מי מוביל — לפי כל מדד'}),
-    el('p',{class:'sec-intro',text:'בחרו מדד — הרשימה תמויין מחדש. שורה = ערך אחד, לכן הצבע כאן הדגשה בלבד.'}));
-  const seg=el('div',{class:'seg'});
-  const hint=el('span',{class:'hint-inline'});
-  const controls=el('div',{class:'controls'},[seg,hint]);
-  const body=el('div',{class:'lb'});
-  let cur='per_day';
+  sec.append(el('div',{class:'label',text:'מי הכי פעיל'}),
+    el('h2',{class:'sh serif',text:'בנט מפרסם הכי הרבה — כמעט פי שניים מנתניהו'}),
+    el('p',{class:'sub',text:'בחרו מדד, והרשימה תתמיין מחדש. ראש הממשלה, שמככב בכותרות, הוא דווקא מהשקטים ברשת.'}));
+  const seg=el('div',{class:'seg'}); const hint=el('span',{class:'seg-desc'});
+  const body=el('div',{class:'lb'}); let cur='per_day';
   function draw(){
     const M=LB[cur]; hint.textContent=M.desc;
     const rows=[...D.politicians].map(p=>({p,v:lbVal(p,cur)})).sort((a,b)=>b.v-a.v);
-    const max=Math.max(...rows.map(r=>r.v))||1;
-    body.innerHTML='';
+    const max=Math.max(...rows.map(r=>r.v))||1; body.innerHTML='';
     rows.forEach((r,i)=>{
       const w=Math.max(3,r.v/max*100);
       const row=el('div',{class:'lb-row'},[
-        el('div',{class:'rank',text:i+1}),
-        el('div',{class:'who'},[
-          el('img',{class:'ava',src:photo(r.p.id),alt:r.p.name_he,loading:'lazy'}),
-          el('div',{},[el('div',{class:'nm',text:r.p.name_he}),
-            el('div',{class:'pt',text:r.p.party_he})])]),
+        el('div',{class:'lb-rank serif',text:i+1}),
+        el('img',{class:'ava',src:photo(r.p.id),alt:r.p.name_he,loading:'lazy'}),
+        el('div',{},[el('div',{class:'lb-nm',text:r.p.name_he}),el('div',{class:'lb-pt',text:r.p.party_he})]),
         el('div',{class:'lb-track-wrap'},[el('div',{class:'lb-track'},[
-          el('div',{class:'lb-fill',style:`width:${w}%;background:${PALETTE[M.color]}`})])]),
-        el('div',{class:'lb-val',text:M.fmt(r.v)}),
+          el('div',{class:'lb-fill',style:`width:${w}%;background:${M.color}`})])]),
+        el('div',{class:'lb-val serif',text:M.fmt(r.v)}),
       ]);
-      hov(row,`<b>${r.p.name_he}</b><br>${M.label}: ${M.fmt(r.v)}<br>`+
-        `<span class="muted">${r.p.tweets} ציוצים · ${r.p.own} עצמיים</span>`);
+      hov(row,`<b>${r.p.name_he}</b><br>${M.label}: ${M.fmt(r.v)}`);
       body.append(row);
     });
   }
-  Object.entries(LB).forEach(([k,m])=>{
-    const b=el('button',{text:m.label,onclick:()=>{cur=k;
-      [...seg.children].forEach(c=>c.setAttribute('aria-pressed',c===b));draw();}});
-    b.setAttribute('aria-pressed',k===cur); seg.append(b);
-  });
+  Object.entries(LB).forEach(([k,m])=>{const b=el('button',{text:m.label,onclick:()=>{cur=k;
+    [...seg.children].forEach(c=>c.setAttribute('aria-pressed',c===b));draw();}});
+    b.setAttribute('aria-pressed',k===cur);seg.append(b);});
   draw();
-  sec.append(controls,el('div',{class:'card'},[body]));
+  sec.append(el('div',{class:'controls'},[seg]),hint,body,
+    el('p',{class:'fig-note',text:'איור 1 — נתונים על ציוצים עצמיים בחלון הקמפיין. ריטוויטים אינם נספרים כטקסט של המדובר.'}));
   return sec;
 }
 
 // ===== FINGERPRINTS =====
 function fingerprints(){
   const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'מילת טביעת האצבע'}),
-    el('p',{class:'sec-intro',html:'לא המילה הנפוצה, אלא <b>המייחדת</b>: מדד log-likelihood (G²) '+
-      'משווה את תדירות המילה אצל הפוליטיקאי מול כל השאר. «ישראל» נפוצה אצל כולם ולכן לא תופיע. '+
-      'המספר — פי כמה יותר מהאחרים.'}));
-  const grid=el('div',{class:'fp-grid'});
+  sec.append(el('div',{class:'label',text:'מילת טביעת האצבע'}),
+    el('h2',{class:'sh serif',text:'מילה אחת מסגירה כל אחד מהם'}),
+    el('p',{class:'sub',html:'מדד סטטיסטי (log-likelihood) מאתר את המילה שכל פוליטיקאי משתמש בה הרבה יותר מכל האחרים. «ישראל» נפוצה אצל כולם — ולכן דווקא היא איננה מספרת דבר.'}));
   [...D.politicians].filter(p=>p.keyness.length)
     .sort((a,b)=>(b.keyness[0]?.g2||0)-(a.keyness[0]?.g2||0)).forEach(p=>{
     const top=p.keyness[0];
-    const chips=el('div',{class:'chips'});
-    p.keyness.slice(1,6).forEach(k=>chips.append(
-      el('span',{class:'chip'},[k.w,el('b',{text:k.ratio?'×'+k.ratio.toFixed(0):'·'})])));
-    const card=el('div',{class:'card'},[
-      el('div',{class:'fp-head'},[
-        el('img',{class:'ava',src:photo(p.id),alt:p.name_he,loading:'lazy'}),
-        el('div',{},[el('div',{class:'nm',text:p.name_he}),
-          el('div',{class:'pt',text:p.party_he})])]),
-      el('div',{class:'fp-word'},[top.w,
-        el('span',{class:'x',text:top.ratio?'×'+top.ratio.toFixed(0):'רק הוא'})]),
-      el('div',{class:'fp-sub',text:`${top.count} פעמים · G²=${top.g2}`}),
-      chips,
+    const row=el('div',{class:'fp-row'},[
+      el('img',{class:'fp-ava',src:photo(p.id),alt:p.name_he,loading:'lazy'}),
+      el('div',{},[el('div',{class:'fp-nm',text:p.name_he}),el('div',{class:'fp-pt',text:p.party_he})]),
+      el('div',{},[el('span',{class:'fp-word serif',text:top.w}),
+        el('span',{class:'fp-x',text:top.ratio?'×'+top.ratio.toFixed(0):'רק הוא'})]),
     ]);
-    hov(card,`<b>${p.name_he}</b><br>מילה מייחדת: ${top.w}<br>`+
-      `מופיעה ${top.count} פעמים, פי ${top.ratio?top.ratio.toFixed(1):'∞'} מהאחרים`);
-    grid.append(card);
+    hov(row,`<b>${p.name_he}</b><br>${top.w} — ${top.count} פעמים`);
+    sec.append(row);
   });
-  sec.append(grid);
+  sec.append(el('p',{class:'fig-note',text:'איור 2 — המילה בעלת ציון ה־G² הגבוה ביותר לכל פוליטיקאי. המספר: פי כמה יותר מהאחרים.'}));
   return sec;
 }
 
 // ===== TOPICS =====
-function seqLevel(v){if(v<=0)return 'lv0';return 'lv'+Math.min(7,1+Math.floor(v*7));}
 function topicsHeat(){
   const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'נושאים'}),
-    el('p',{class:'sec-intro',text:'אחוז הציוצים העצמיים שנגעו בנושא. ככל שהתא כהה יותר — האחוז גבוה יותר. '+
-      'עברו עם העכבר לערך מדויק. סכום שורה יכול לעלות על 100%: ציוץ נוגע בכמה נושאים.'}));
+  sec.append(el('div',{class:'label',text:'סדר היום'}),
+    el('h2',{class:'sh serif',text:'ביטחון ובחירות — שני הנושאים ששולטים בשיח'}),
+    el('p',{class:'sub',text:'אחוז הציוצים העצמיים שנגעו בכל נושא. ככל שהתא כהה יותר, האחוז גבוה יותר. עברו עם העכבר לערך מדויק.'}));
   const order=D.topic_order;
   const tbl=el('table',{class:'hm'});
   const thead=el('tr',{},[el('th',{class:'row'})]);
@@ -391,134 +425,113 @@ function topicsHeat(){
   const tb=el('tbody');
   [...D.politicians].sort((a,b)=>b.per_day-a.per_day).forEach(p=>{
     const tr=el('tr',{},[el('th',{class:'row',text:p.name_he})]);
-    order.forEach(t=>{
-      const s=p.topics[t]||0,v=Math.min(1,s/0.45);
+    order.forEach(t=>{const s=p.topics[t]||0,v=Math.min(1,s/0.45);
       const cell=el('div',{class:'cell '+seqLevel(v),text:s<0.03?'':pct(s)});
-      hov(cell,`<b>${p.name_he}</b><br>${D.topic_he[t]||D.topic_ru[t]}: <b>${pct(s)}</b> מהציוצים`);
-      tr.append(el('td',{},[cell]));
-    });
+      hov(cell,`<b>${p.name_he}</b><br>${D.topic_he[t]||D.topic_ru[t]}: <b>${pct(s)}</b>`);
+      tr.append(el('td',{},[cell]));});
     tb.append(tr);
   });
   tbl.append(tb);
-  sec.append(el('div',{class:'card scroll'},[tbl]));
+  sec.append(el('div',{class:'scroll'},[tbl]),
+    el('p',{class:'fig-note',text:'איור 3 — סכום שורה יכול לעלות על 100%: ציוץ נוגע בכמה נושאים.'}));
+  return sec;
+}
+
+// ===== GRAVITY (mentions + exhibit) =====
+function gravity(){
+  const sec=el('section',{class:'sec'});
+  sec.append(el('div',{class:'label',text:'מרכז הכובד'}),
+    el('h2',{class:'sh serif',text:'הכול סובב סביב איש אחד'}),
+    el('p',{class:'sub',text:'נתניהו תוקף הכי מעט — רק 2% מציוציו נושאים שפת האשמה. ובכל זאת מאזכרים אותו יותר מכולם: פי 2.5 מהבא אחריו. האופוזיציה כולה מסתובבת סביבו, והבחירות הן, למעשה, משאל עַם עליו.'}));
+  const talked=D.mentions.most_talked.slice(0,6);
+  const maxT=Math.max(...talked.map(x=>x[1]),1);
+  const list=el('div',{class:'mn-list'});
+  talked.forEach(([id,w],i)=>list.append(el('div',{class:'mn-row'},[
+    el('div',{class:'mn-nm',text:byId[id]?byId[id].name_he:id}),
+    el('div',{class:'mn-track'},[el('div',{class:'mn-fill'+(i===0?' lead':''),style:`width:${w/maxT*100}%`})]),
+    el('div',{class:'mn-val serif',text:w})])));
+  sec.append(list,el('p',{class:'fig-note',text:'איור 4 — מספר הפעמים שכל דמות אוזכרה בציוצי האחרים (בתגית ובשם).'}));
+  // exhibit: top viral tweet overall
+  const top=[...D.politicians].filter(p=>p.viral&&p.viral.text)
+    .sort((a,b)=>(b.viral.likes||0)-(a.viral.likes||0))[0];
+  if(top){const v=top.viral;
+    sec.append(el('div',{class:'exhibit'},[
+      el('div',{class:'ex-h'},[el('img',{class:'ex-ava',src:photo(top.id),alt:''}),
+        el('div',{},[el('div',{class:'ex-nm',text:top.name_he}),el('div',{class:'ex-hd',text:'הציוץ הנצפה ביותר בקמפיין'})])]),
+      el('div',{class:'ex-txt'+(isHe(v.text)?'':' ltr'),text:'«'+cleanTweet(v.text).slice(0,240)+'»'}),
+      el('div',{class:'ex-meta',html:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10-9.2C.6 9 1.6 5.7 4.6 5c2-.5 3.7.6 4.4 2 .7-1.4 2.4-2.5 4.4-2 3 .7 4 4 2.6 6.8C19.5 16.3 12 21 12 21z"/></svg>'
+        +'<span>'+sp(v.likes)+' לייקים</span>'+(v.views?' · <span>'+sp(v.views)+' צפיות</span>':'')+' · '+(v.date||'').slice(0,10)}),
+    ]));
+  }
   return sec;
 }
 
 // ===== ATTACK / PROGRAM =====
 function attackProgram(){
   const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'התקפה או תוכנית'}),
-    el('p',{class:'sec-intro',html:'אחוז הציוצים עם שפת האשמה '+
-      '(<span style="color:var(--s2)">כתום</span>) מול שפת הבטחה '+
-      '(<span style="color:var(--s1)">כחול</span>). האמצע — אפס.'}));
+  sec.append(el('div',{class:'label',text:'התקפה או תוכנית'}),
+    el('h2',{class:'sh serif',text:'מי מאשים, ומי מבטיח'}),
+    el('p',{class:'sub',html:'אחוז הציוצים עם שפת האשמה (<span style="color:var(--clay)">כתום</span>) מול שפת הבטחה (<span style="color:var(--blue)">כחול</span>). האמצע — אפס.'}));
+  sec.append(el('div',{class:'bf-head'},[el('span',{class:'a',text:'◀ התקפה'}),el('span',{class:'p',text:'תוכנית ▶'})]));
   const maxV=Math.max(...D.politicians.flatMap(p=>[p.attack,p.program]),0.3);
-  const body=el('div');
   [...D.politicians].sort((a,b)=>(b.attack+b.program)-(a.attack+a.program)).forEach(p=>{
     const lw=p.attack/maxV*100,rw=p.program/maxV*100;
-    const row=el('div',{class:'dv-row'},[
-      el('div',{class:'dv-who'},[
-        el('img',{class:'ava',src:photo(p.id),alt:'',loading:'lazy'}),
-        el('div',{class:'nm',text:p.name_he})]),
-      el('div',{class:'dv-bars'},[
-        el('div',{class:'dv-half dv-left',style:'flex:1'},[
-          el('span',{class:'dv-lab',text:pct(p.attack)}),
-          el('div',{class:'dv-seg',style:`width:${lw}%;background:var(--s2);border-radius:5px 0 0 5px`})]),
-        el('div',{class:'dv-mid'}),
-        el('div',{class:'dv-half',style:'flex:1'},[
-          el('div',{class:'dv-seg',style:`width:${rw}%;background:var(--s1);border-radius:0 5px 5px 0`}),
-          el('span',{class:'dv-lab',text:pct(p.program)})]),
+    const row=el('div',{class:'bf-row'},[
+      el('div',{class:'bf-nm',text:p.name_he}),
+      el('div',{class:'bf-bars'},[
+        el('div',{class:'bf-half bf-l',style:'flex:1'},[el('span',{class:'bf-lab',text:pct(p.attack)}),
+          el('div',{class:'bf-seg',style:`width:${lw}%;background:var(--clay);border-radius:2px 0 0 2px`})]),
+        el('div',{class:'bf-mid'}),
+        el('div',{class:'bf-half',style:'flex:1'},[el('div',{class:'bf-seg',style:`width:${rw}%;background:var(--blue);border-radius:0 2px 2px 0`}),
+          el('span',{class:'bf-lab',text:pct(p.program)})]),
       ]),
     ]);
-    hov(row,`<b>${p.name_he}</b><br>התקפה: ${pct(p.attack)} · תוכנית: ${pct(p.program)}`);
-    body.append(row);
+    hov(row,`<b>${p.name_he}</b><br>התקפה ${pct(p.attack)} · תוכנית ${pct(p.program)}`);
+    sec.append(row);
   });
-  sec.append(el('div',{class:'card'},[body]));
+  sec.append(el('p',{class:'fig-note',text:'איור 5 — שני מדדים לקסיקליים על פני הציוצים העצמיים.'}));
   return sec;
 }
 
 // ===== WE / THEY =====
 function weThey(){
   const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'«אנחנו» מול «הם»'}),
-    el('p',{class:'sec-intro',text:'יחס כינויי גוף ראשון־רבים לשלישי־רבים. גבוה — שפת ליכוד; נמוך — שפת עימות.'}));
+  sec.append(el('div',{class:'label',text:'אנחנו והם'}),
+    el('h2',{class:'sh serif',text:'שפת הליכוד מול שפת העימות'}),
+    el('p',{class:'sub',text:'יחס כינויי «אנחנו» ל«הם». גבוה — שפת ליכוד; נמוך — שפת עימות.'}));
   const rows=[...D.politicians].map(p=>({p,r:p.we/Math.max(1,p.they)})).sort((a,b)=>b.r-a.r);
-  const max=Math.max(...rows.map(x=>x.r))||1;
-  const body=el('div',{class:'lb'});
-  rows.forEach(({p,r})=>{
-    const w=Math.max(3,r/max*100);
+  const max=Math.max(...rows.map(x=>x.r))||1; const body=el('div',{class:'lb'});
+  rows.forEach(({p,r})=>{const w=Math.max(3,r/max*100);
     const row=el('div',{class:'lb-row'},[
-      el('div',{class:'rank'}),
-      el('div',{class:'who'},[el('img',{class:'ava',src:photo(p.id),alt:'',loading:'lazy'}),
-        el('div',{},[el('div',{class:'nm',text:p.name_he}),
-          el('div',{class:'pt',text:`אנחנו ${p.we} · הם ${p.they}`})])]),
+      el('div',{class:'lb-rank'}),
+      el('img',{class:'ava',src:photo(p.id),alt:'',loading:'lazy'}),
+      el('div',{},[el('div',{class:'lb-nm',text:p.name_he}),el('div',{class:'lb-pt',text:`אנחנו ${p.we} · הם ${p.they}`})]),
       el('div',{class:'lb-track-wrap'},[el('div',{class:'lb-track'},[
-        el('div',{class:'lb-fill',style:`width:${w}%;background:${r>=1?'var(--s3)':'var(--s2)'}`})])]),
-      el('div',{class:'lb-val',text:r.toFixed(1)}),
+        el('div',{class:'lb-fill',style:`width:${w}%;background:${r>=1?'var(--olive)':'var(--clay)'}`})])]),
+      el('div',{class:'lb-val serif',text:r.toFixed(1)}),
     ]);
-    hov(row,`<b>${p.name_he}</b><br>«אנחנו» ${p.we} / «הם» ${p.they} = ${r.toFixed(2)}`);
+    hov(row,`<b>${p.name_he}</b><br>אנחנו ${p.we} / הם ${p.they}`);
     body.append(row);
   });
-  sec.append(el('div',{class:'card'},[body]));
-  return sec;
-}
-
-// ===== MENTIONS =====
-function mentions(){
-  const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'מי על מי'}),
-    el('p',{class:'sec-intro',text:'אזכורים לפי תגית ולפי שם בטקסט. שורה — מי מדבר, עמודה — על מי. עברו עם העכבר.'}));
-  const ids=D.politicians.map(p=>p.id);
-  const emap={}; D.mentions.edges.forEach(e=>emap[e.source+'>'+e.target]=e.weight);
-  const maxW=Math.max(...D.mentions.edges.map(e=>e.weight),1);
-  const tbl=el('table',{class:'hm'});
-  const head=el('tr',{},[el('th',{class:'row',html:'<span class="muted">מדבר&nbsp;↓ / על&nbsp;מי&nbsp;→</span>'})]);
-  ids.forEach(t=>head.append(el('th',{text:byId[t].name_he.split(' ').pop()})));
-  tbl.append(el('thead',{},[head]));
-  const tb=el('tbody');
-  ids.forEach(s=>{
-    const tr=el('tr',{},[el('th',{class:'row',text:byId[s].name_he})]);
-    ids.forEach(t=>{
-      if(s===t){tr.append(el('td',{},[el('div',{class:'cell lv0',text:'·'})]));return;}
-      const w=emap[s+'>'+t]||0,v=w/maxW;
-      const cell=el('div',{class:'cell '+seqLevel(v),text:w||''});
-      hov(cell,`<b>${byId[s].name_he}</b> ← <b>${byId[t].name_he}</b><br>${w} אזכורים`);
-      tr.append(el('td',{},[cell]));
-    });
-    tb.append(tr);
-  });
-  tbl.append(tb);
-  const talked=D.mentions.most_talked.slice(0,6);
-  const maxT=Math.max(...talked.map(x=>x[1]),1);
-  const list=el('div',{class:'lb'});
-  talked.forEach(([id,w])=>list.append(el('div',{class:'lb-row',style:'grid-template-columns:32px 176px 1fr 60px'},[
-    el('div',{class:'rank'}),
-    el('div',{class:'who'},[el('img',{class:'ava',src:photo(id),alt:'',loading:'lazy'}),
-      el('div',{class:'nm',text:byId[id].name_he})]),
-    el('div',{class:'lb-track-wrap'},[el('div',{class:'lb-track'},[
-      el('div',{class:'lb-fill',style:`width:${w/maxT*100}%;background:var(--s2)`})])]),
-    el('div',{class:'lb-val',text:w})])));
-  sec.append(el('div',{class:'card scroll'},[tbl]),
-    el('div',{class:'card',style:'margin-top:14px'},[el('h3',{text:'על מי מדברים הכי הרבה'}),list]));
+  sec.append(body);
   return sec;
 }
 
 // ===== VIRAL =====
 function viral(){
   const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'הציוצים הבולטים ביותר'}),
-    el('p',{class:'sec-intro',text:'הציוץ העצמי של כל פוליטיקאי עם מירב הלייקים. נקודה אחת — אינה מאפיינת את הטון הכללי.'}));
+  sec.append(el('div',{class:'label',text:'רגעים ויראליים'}),
+    el('h2',{class:'sh serif',text:'הציוצים שתפסו הכי הרבה'}),
+    el('p',{class:'sub',text:'הציוץ העצמי של כל פוליטיקאי עם מירב הלייקים. נקודה אחת — אינה מאפיינת את הטון הכללי.'}));
   const grid=el('div',{class:'vir-grid'});
   [...D.politicians].filter(p=>p.viral&&p.viral.text)
     .sort((a,b)=>(b.viral.likes||0)-(a.viral.likes||0)).forEach(p=>{
     const v=p.viral;
-    grid.append(el('div',{class:'card'},[
-      el('div',{class:'vir-head'},[
-        el('img',{class:'ava',src:photo(p.id),alt:'',loading:'lazy'}),
-        el('div',{class:'nm',text:p.name_he}),
-        el('div',{class:'likes',text:'❤ '+sp(v.likes)})]),
-      el('div',{class:(isHe(v.text)?'vir-text':'vir-text ltr'),text:v.text.slice(0,300)}),
-      el('div',{class:'vir-meta',text:`${(v.date||'').slice(0,10)} · ${sp(v.retweets||0)} ריטוויטים`+
-        (v.views?` · ${sp(v.views)} צפיות`:'')}),
+    grid.append(el('div',{class:'vir-card'},[
+      el('div',{class:'vir-head'},[el('img',{class:'ava',src:photo(p.id),alt:'',loading:'lazy'}),
+        el('div',{class:'nm',text:p.name_he}),el('div',{class:'likes',html:'❤ '+sp(v.likes)})]),
+      el('div',{class:'vir-text'+(isHe(v.text)?'':' ltr'),text:'«'+cleanTweet(v.text).slice(0,220)+'»'}),
+      el('div',{class:'vir-meta',text:(v.date||'').slice(0,10)+' · '+sp(v.retweets||0)+' ריטוויטים'}),
     ]));
   });
   sec.append(grid);
@@ -528,14 +541,15 @@ function viral(){
 // ===== CORPUS =====
 function corpus(){
   const sec=el('section',{class:'sec'});
-  sec.append(el('h2',{text:'אוצר המילים של הקמפיין'}),
-    el('p',{class:'sec-intro',text:'המילים והצירופים הנפוצים ביותר אצל כלל הפוליטיקאים יחד — שפת הקמפיין עצמה.'}));
+  sec.append(el('div',{class:'label',text:'אוצר המילים'}),
+    el('h2',{class:'sh serif',text:'המילים שחוזרות אצל כולם'}),
+    el('p',{class:'sub',text:'המילים והצירופים הנפוצים ביותר בכלל המאגר — שפת הקמפיין עצמה.'}));
   const grid=el('div',{class:'grid2'});
   [['1','מילים'],['2','צמדים'],['3','שלשות']].forEach(([n,title])=>{
     const chips=el('div',{class:'chips'});
     (D.corpus_ngrams[n]||[]).slice(0,14).forEach(x=>chips.append(
       el('span',{class:'chip'},[x.w,el('b',{text:x.c})])));
-    grid.append(el('div',{class:'card'},[el('h3',{text:title}),chips]));
+    grid.append(el('div',{class:'corpus-card'},[el('h3',{class:'serif',text:title}),chips]));
   });
   sec.append(grid);
   return sec;
@@ -545,44 +559,31 @@ function corpus(){
 function methodology(){
   const sec=el('section',{class:'sec'});
   const m=D.methodology_he;
-  sec.append(el('h2',{text:'מתודולוגיה — איך חושב כל מספר'}),
-    el('p',{class:'sec-intro',text:'כל מדד ניתן להוכחה: מדד → אילו ציוצים נלקחים → שדה בציוץ המקורי → נוסחה.'}));
-  if(!m||!m.metrics){sec.append(el('p',{class:'muted',text:'—'}));return sec;}
-  if(m.note)sec.append(el('p',{class:'sec-intro',style:'color:var(--ink-muted)',text:m.note}));
-  const det=el('details');
-  det.append(el('summary',{text:'כל המדדים: מקור, נוסחה, מגבלות'}));
-  const tbl=el('table',{class:'meth-table'});
-  tbl.append(el('thead',{},[el('tr',{},[
-    el('th',{text:'מדד'}),el('th',{text:'מקור'}),el('th',{text:'נוסחה'}),el('th',{text:'מגבלות'})])]));
-  const tb=el('tbody');
-  Object.entries(m.metrics).forEach(([name,s])=>{
-    tb.append(el('tr',{},[
-      el('td',{},[el('b',{text:name})]),
-      el('td',{},[el('code',{text:s.src})]),
-      el('td',{text:s.f}),
-      el('td',{text:s.lim}),
-    ]));
-  });
-  tbl.append(tb); det.append(el('div',{class:'scroll'},[tbl]));
-  sec.append(det);
-  // популяции
-  const det2=el('details');
-  det2.append(el('summary',{text:'אוכלוסיות (אילו ציוצים)'}));
-  const ul=el('div',{class:'card',style:'margin-top:10px'});
-  Object.entries(m.populations).forEach(([k,v])=>ul.append(
-    el('div',{style:'margin:4px 0'},[el('code',{text:k,style:'direction:ltr;display:inline-block'}),' — '+v])));
-  det2.append(ul); sec.append(det2);
+  sec.append(el('div',{class:'label',text:'איך נמדד'}),
+    el('h2',{class:'sh serif',text:'מתודולוגיה — כל מספר ניתן להוכחה'}));
+  if(m&&m.note)sec.append(el('p',{class:'meth-note',text:m.note}));
+  if(m&&m.metrics){
+    const det=el('details');
+    det.append(el('summary',{text:'כל המדדים: מקור, נוסחה, מגבלות'}));
+    const tbl=el('table',{class:'meth-table'});
+    tbl.append(el('thead',{},[el('tr',{},[el('th',{text:'מדד'}),el('th',{text:'מקור'}),el('th',{text:'נוסחה'}),el('th',{text:'מגבלות'})])]));
+    const tb=el('tbody');
+    Object.entries(m.metrics).forEach(([name,s])=>tb.append(el('tr',{},[
+      el('td',{},[el('b',{text:name})]),el('td',{},[el('code',{text:s.src})]),
+      el('td',{text:s.f}),el('td',{text:s.lim})])));
+    tbl.append(tb);det.append(el('div',{class:'scroll'},[tbl]));
+    sec.append(det);
+  }
   return sec;
 }
 
 // ===== FOOTER =====
 function footer(){
   const m=D.meta;
-  return el('footer',{html:
-    `נאסף ב־${m.generated_at.slice(0,10)}. מאגר: ${sp(m.n_tweets)} ציוצים, ${m.n_politicians} ראשי מפלגות. `+
-    `לממטיזציה: ${m.lemmatizer}. ריטוויטים הוצאו ממדדי הטקסט. `+
-    `המספרים מתארים תדירות מילים, לא צדקת הדובר. המקור — ציוצים פומביים; האיסוף ב־scraping. `+
-    `<a href="https://github.com/AlexTsiris/knesset-2026-language">קוד ומתודולוגיה ב־GitHub</a>.`});
+  return el('div',{class:'colophon',html:
+    'מפת שפה · כנסת 2026 · '+sp(m.n_tweets)+' ציוצים · '+m.n_politicians+' ראשי מפלגות<br>'+
+    'לממטיזציה: '+m.lemmatizer+' · ריטוויטים הוצאו ממדדי הטקסט · המספרים מתארים תדירות מילים, לא צדקת הדובר.<br>'+
+    '<a href="https://github.com/AlexTsiris/knesset-2026-language">הקוד והמתודולוגיה זמינים לציבור ב־GitHub</a>'});
 }
 </script>
 </body>

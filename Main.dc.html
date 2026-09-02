@@ -1,0 +1,394 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@300;400;500;700&display=swap">
+  <style>
+    :root{
+      --paper:#f6f1e8; --panel:#fffdf7; --ink:#211c16; --ink2:#5b5348;
+      --muted:#948a7b; --rule:#e2d9c8; --rule2:#cfc4ae;
+      --blue:#2f6d80; --clay:#b0553c; --olive:#5f7449; --gold:#9a7433;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:#f6f1e8}
+    .paper{background:var(--paper);color:var(--ink);
+      font-family:"Heebo","Segoe UI",system-ui,sans-serif;
+      direction:rtl;line-height:1.7;-webkit-font-smoothing:antialiased}
+    .col{max-width:720px;margin:0 auto;padding:0 40px}
+    .serif{font-family:"Frank Ruhl Libre","Frank Ruhl Libre",Georgia,serif}
+    a{color:var(--clay);text-decoration:none}a:hover{color:#8f4531}
+    .en{direction:ltr;unicode-bidi:isolate;display:inline-block}
+
+    /* masthead */
+    .masthead{border-top:3px double var(--rule2);border-bottom:1px solid var(--rule);
+      margin-top:0;padding:12px 0;display:flex;justify-content:space-between;align-items:center}
+    .kicker{font-size:12.5px;font-weight:700;letter-spacing:.14em;color:var(--clay);text-transform:uppercase}
+    .masthead .date{font-size:12.5px;color:var(--muted);letter-spacing:.02em}
+
+    /* hero */
+    .hero{padding:46px 0 8px}
+    h1.head{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+      font-size:clamp(40px,6vw,66px);line-height:1.04;letter-spacing:-.01em;margin:0 0 20px}
+    .head .em{color:var(--clay)}
+    .dek{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:500;font-style:italic;
+      font-size:23px;line-height:1.5;color:var(--ink2);margin:0 0 26px;max-width:640px}
+    .byline{display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+      border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+      padding:12px 0;font-size:13.5px;color:var(--ink2)}
+    .byline b{color:var(--ink);font-weight:700}
+    .byline .dot{width:3px;height:3px;border-radius:50%;background:var(--muted)}
+
+    /* lead + dropcap */
+    .lead{font-size:19px;line-height:1.85;margin:30px 0 8px;color:#332c22}
+    .lead .dropcap{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+      float:right;font-size:74px;line-height:.72;margin:8px 12px 0 0;color:var(--clay)}
+
+    /* stat band */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:34px 0;
+      border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+    .stat{padding:20px 16px;border-inline-start:1px solid var(--rule)}
+    .stat:first-child{border-inline-start:0}
+    .stat .n{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+      font-size:40px;line-height:1;color:var(--ink)}
+    .stat .l{font-size:12.5px;color:var(--ink2);margin-top:7px;line-height:1.35}
+
+    /* section */
+    .sec{margin:52px 0 0}
+    .label{font-size:12px;font-weight:700;letter-spacing:.13em;color:var(--clay);
+      text-transform:uppercase;margin:0 0 8px;display:flex;align-items:center;gap:10px}
+    .label::after{content:"";height:1px;background:var(--rule2);flex:1}
+    h2.sh{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;
+      font-size:32px;line-height:1.15;margin:0 0 8px}
+    .sub{font-size:16px;color:var(--ink2);margin:0 0 22px;line-height:1.65}
+    .fig-note{font-size:12.5px;color:var(--muted);margin-top:14px;font-style:italic}
+
+    /* interactive leaderboard */
+    .seg{display:inline-flex;background:var(--panel);border:1px solid var(--rule2);
+      border-radius:2px;padding:3px;gap:2px;margin-bottom:6px;flex-wrap:wrap}
+    .seg-b{border:0;background:transparent;color:var(--ink2);cursor:pointer;
+      font-family:"Heebo",sans-serif;font-size:13.5px;font-weight:500;
+      padding:7px 15px;border-radius:1px}
+    .seg-b:hover{color:var(--ink)}
+    .seg-b.on{background:var(--ink);color:var(--paper)}
+    .seg-desc{font-size:13.5px;color:var(--muted);margin:8px 0 18px;height:20px}
+    .lb{display:flex;flex-direction:column}
+    .lb-row{display:grid;grid-template-columns:26px 42px 1fr 200px 62px;gap:13px;
+      align-items:center;padding:11px 0;border-bottom:1px solid var(--rule)}
+    .lb-row:first-child{border-top:1px solid var(--rule2)}
+    .lb-rank{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:17px;
+      color:var(--muted);text-align:center}
+    .lb-ava{width:42px;height:42px;border-radius:50%;object-fit:cover;
+      border:1px solid var(--rule2);filter:grayscale(.15)}
+    .lb-nm{font-size:15px;font-weight:700;color:var(--ink);line-height:1.2}
+    .lb-pt{font-size:12px;color:var(--muted)}
+    .lb-track{background:#eae1d1;border-radius:1px;height:20px;overflow:hidden}
+    .lb-fill{height:100%;transition:width .55s cubic-bezier(.4,0,.2,1)}
+    .lb-val{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:19px;
+      text-align:left;color:var(--ink)}
+
+    /* fingerprint list */
+    .fp-row{display:grid;grid-template-columns:52px 1fr auto;gap:16px;align-items:center;
+      padding:15px 0;border-bottom:1px solid var(--rule)}
+    .fp-row:first-child{border-top:2px solid var(--ink)}
+    .fp-ava{width:52px;height:52px;border-radius:50%;object-fit:cover;border:1px solid var(--rule2)}
+    .fp-nm{font-size:15.5px;font-weight:700;color:var(--ink)}
+    .fp-pt{font-size:12.5px;color:var(--muted)}
+    .fp-word{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;
+      font-size:34px;line-height:1;color:var(--ink);text-align:left}
+    .fp-x{font-family:"Heebo",sans-serif;font-size:13px;font-weight:700;color:var(--clay);
+      margin-inline-start:10px}
+
+    /* mentions bars */
+    .mn{margin-top:6px}
+    .mn-row{display:grid;grid-template-columns:120px 1fr 46px;gap:14px;align-items:center;padding:9px 0}
+    .mn-nm{font-size:14.5px;font-weight:500;text-align:start}
+    .mn-track{height:26px;background:transparent}
+    .mn-fill{height:100%;background:var(--blue);border-radius:1px;
+      display:flex;align-items:center;justify-content:flex-start}
+    .mn-fill.lead{background:var(--clay)}
+    .mn-val{font-family:"Frank Ruhl Libre",serif;font-weight:700;font-size:18px;text-align:left}
+
+    /* callout / pull quote */
+    .callout{background:#efe7d8;border-inline-start:4px solid var(--clay);
+      padding:22px 26px;margin:30px 0;font-size:16.5px;line-height:1.7;color:#3a3226}
+    .pull{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-style:italic;
+      font-size:30px;line-height:1.32;color:var(--ink);text-align:center;
+      margin:44px auto;max-width:600px;padding:0 20px}
+    .pull .mk{color:var(--clay)}
+
+    /* butterfly attack/program */
+    .bf-head{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:10px}
+    .bf-head .a{color:var(--clay)}.bf-head .p{color:var(--blue)}
+    .bf-row{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:center;padding:6px 0}
+    .bf-nm{font-size:13.5px;font-weight:500}
+    .bf-bars{display:flex;align-items:center}
+    .bf-half{height:17px;display:flex;align-items:center;overflow:hidden}
+    .bf-l{justify-content:flex-end}
+    .bf-mid{width:1px;height:26px;background:var(--rule2);flex:none}
+    .bf-seg{height:100%}
+    .bf-lab{font-size:11.5px;color:var(--ink2);padding:0 7px;font-family:"Heebo",sans-serif}
+
+    /* exhibit tweet */
+    .exhibit{background:var(--panel);border:1px solid var(--rule2);border-radius:3px;
+      padding:24px 26px;margin:24px 0}
+    .exhibit .ex-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .exhibit .ex-ava{width:46px;height:46px;border-radius:50%;object-fit:cover}
+    .exhibit .ex-nm{font-size:15px;font-weight:700}
+    .exhibit .ex-hd{font-size:12.5px;color:var(--muted)}
+    .exhibit .ex-txt{font-family:"Frank Ruhl Libre",Georgia,serif;font-size:22px;line-height:1.5;color:var(--ink)}
+    .exhibit .ex-meta{display:flex;align-items:center;gap:7px;margin-top:14px;
+      font-size:13px;color:var(--ink2);font-weight:500}
+    .exhibit .ex-meta svg{width:16px;height:16px;color:var(--clay)}
+
+    /* methodology / colophon */
+    .method{border-top:1px solid var(--rule);margin-top:56px;padding-top:22px;
+      font-size:13.5px;line-height:1.7;color:var(--ink2)}
+    .method h3{font-family:"Frank Ruhl Libre",serif;font-size:16px;font-weight:700;
+      color:var(--ink);margin:0 0 8px}
+    .colophon{border-top:3px double var(--rule2);margin-top:34px;padding:18px 0 8px;
+      font-size:12.5px;color:var(--muted);text-align:center}
+  </style>
+</helmet>
+
+<div class="paper" style="padding:34px 0 40px">
+  <div class="col">
+
+    <div class="masthead">
+      <span class="kicker">ניתוח נתונים · מערכת הבחירות 2026</span>
+      <span class="date">עודכן 1 בספטמבר 2026</span>
+    </div>
+
+    <div class="hero">
+      <h1 class="head serif">כולם מדברים על נתניהו.<br><span class="em">הוא כמעט לא מגיב.</span></h1>
+      <p class="dek">ניתחנו 1,127 ציוצים של עשרה ראשי מפלגות מאז פיזור הכנסת. הנתונים חושפים את שפת הקמפיין — מי תוקף, מי מבטיח, ואיזו מילה אחת מסגירה כל אחד מהם.</p>
+      <div class="byline">
+        <span><b>מפת שפה</b> · ניתוח עצמאי</span>
+        <span class="dot"></span><span>47 ימי קמפיין</span>
+        <span class="dot"></span><span>56 יום לבחירות</span>
+        <span class="dot"></span><span>המקור: ציוצים פומביים</span>
+      </div>
+    </div>
+
+    <p class="lead"><span class="dropcap serif">ר</span>גע לפני שמערכת הבחירות נכנסת להילוך גבוה, בחנּו כל ציוץ שכתבו עשרה ראשי מפלגות מאז פיזור הכנסת ב־17 ביולי — 1,127 ציוצים בתוך 47 ימים. השאלה איננה מי צודק, אלא <em>מה נאמר וכמה</em>: אילו מילים חוזרות, מי עסוק בהתקפה ומי בהבטחה, ואת מי כולם גוררים אל תוך השיחה. תבנית אחת חוזרת שוב ושוב — כמעט כל שיחה מובילה בחזרה לאדם אחד.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="n serif">1,127</div><div class="l">ציוצים נותחו</div></div>
+      <div class="stat"><div class="n serif">10</div><div class="l">ראשי מפלגות</div></div>
+      <div class="stat"><div class="n serif">47</div><div class="l">ימי קמפיין</div></div>
+      <div class="stat"><div class="n serif">116</div><div class="l">אזכורי נתניהו — פי 2.5 מהבא בתור</div></div>
+    </div>
+
+    <!-- §1 interactive leaderboard -->
+    <div class="sec">
+      <div class="label">מי הכי פעיל</div>
+      <h2 class="sh serif">בנט מפרסם הכי הרבה — כמעט פי שניים מנתניהו</h2>
+      <p class="sub">בחרו מדד, והרשימה תתמיין מחדש. ראש הממשלה, שמככב בכותרות, הוא דווקא מהשקטים ברשת.</p>
+      <div class="seg">
+        <sc-for list="{{btns}}" as="b" hint-placeholder-count="4">
+          <button class="{{b.cls}}" onClick="{{b.pick}}">{{b.label}}</button>
+        </sc-for>
+      </div>
+      <div class="seg-desc">{{desc}}</div>
+      <div class="lb">
+        <sc-for list="{{items}}" as="r" hint-placeholder-count="10">
+          <div class="lb-row">
+            <div class="lb-rank serif">{{r.rank}}</div>
+            <img class="lb-ava" src="{{r.photo}}" alt="{{r.name}}">
+            <div><div class="lb-nm">{{r.name}}</div><div class="lb-pt">{{r.party}}</div></div>
+            <div class="lb-track"><div class="lb-fill" style="width: {{r.w}}%; background: {{r.color}}"></div></div>
+            <div class="lb-val serif">{{r.val}}</div>
+          </div>
+        </sc-for>
+      </div>
+      <p class="fig-note">איור 1 — נתונים על ציוצים עצמיים בחלון הקמפיין. ריטוויטים אינם נספרים כטקסט של המדובר.</p>
+    </div>
+
+    <!-- §2 fingerprints -->
+    <div class="sec">
+      <div class="label">מילת טביעת האצבע</div>
+      <h2 class="sh serif">מילה אחת מסגירה כל אחד מהם</h2>
+      <p class="sub">מדד סטטיסטי (log-likelihood) מאתר את המילה שכל פוליטיקאי משתמש בה הרבה יותר מכל האחרים. «ישראל» נפוצה אצל כולם — ולכן דווקא היא איננה מספרת דבר.</p>
+
+      <div class="fp-row">
+        <img class="fp-ava" src="tibi.jpg" alt="">
+        <div><div class="fp-nm">אחמד טיבי</div><div class="fp-pt">הרשימה המשותפת</div></div>
+        <div><span class="fp-word serif">מתנחל</span><span class="fp-x">×223</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="haskel.jpg" alt="">
+        <div><div class="fp-nm">שרן השכל</div><div class="fp-pt">ישראל ראשונה</div></div>
+        <div><span class="fp-word serif">תחילה</span><span class="fp-x">×97</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="lapid.jpg" alt="">
+        <div><div class="fp-nm">יאיר לפיד</div><div class="fp-pt">ביחד / יש עתיד</div></div>
+        <div><span class="fp-word serif">שואה</span><span class="fp-x">×54</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="bennett.jpg" alt="">
+        <div><div class="fp-nm">נפתלי בנט</div><div class="fp-pt">ביחד</div></div>
+        <div><span class="fp-word serif">קטאר</span><span class="fp-x">×51</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="golan.jpg" alt="">
+        <div><div class="fp-nm">יאיר גולן</div><div class="fp-pt">הדמוקרטים</div></div>
+        <div><span class="fp-word serif">דמוקרטיה</span><span class="fp-x">×22</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="smotrich.jpg" alt="">
+        <div><div class="fp-nm">בצלאל סמוטריץ'</div><div class="fp-pt">הציונות הדתית</div></div>
+        <div><span class="fp-word serif">יישוב</span><span class="fp-x">×14</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="ben_gvir.jpg" alt="">
+        <div><div class="fp-nm">איתמר בן גביר</div><div class="fp-pt">עוצמה יהודית</div></div>
+        <div><span class="fp-word serif">משטרה</span><span class="fp-x">×11</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="lieberman.jpg" alt="">
+        <div><div class="fp-nm">אביגדור ליברמן</div><div class="fp-pt">ישראל ביתנו</div></div>
+        <div><span class="fp-word serif">טבח</span><span class="fp-x">×9</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="netanyahu.jpg" alt="">
+        <div><div class="fp-nm">בנימין נתניהו</div><div class="fp-pt">הליכוד</div></div>
+        <div><span class="fp-word serif">איזנקוט</span><span class="fp-x">×9</span></div>
+      </div>
+      <div class="fp-row">
+        <img class="fp-ava" src="maoz.jpg" alt="">
+        <div><div class="fp-nm">אבי מעוז</div><div class="fp-pt">נעם</div></div>
+        <div><span class="fp-word serif">זהות</span><span class="fp-x">×21</span></div>
+      </div>
+      <p class="fig-note">איור 2 — המילה בעלת ציון ה־G² הגבוה ביותר לכל פוליטיקאי. המספר: פי כמה יותר מהאחרים.</p>
+    </div>
+
+    <div class="pull serif">"בקמפיין הזה, מי ש<span class="mk">שותק</span> הכי הרבה — נמצא ב<span class="mk">מרכז</span> הכי הרבה."</div>
+
+    <!-- §3 gravity -->
+    <div class="sec">
+      <div class="label">מרכז הכובד</div>
+      <h2 class="sh serif">הכול סובב סביב איש אחד</h2>
+      <p class="sub">נתניהו תוקף הכי מעט — רק 2% מציוציו נושאים שפת האשמה. ובכל זאת מאזכרים אותו יותר מכולם: פי 2.5 מהבא אחריו. האופוזיציה כולה מסתובבת סביבו, והבחירות הן, למעשה, משאל עַם עליו.</p>
+      <div class="mn">
+        <div class="mn-row"><div class="mn-nm">בנימין נתניהו</div><div class="mn-track"><div class="mn-fill lead" style="width:100%"></div></div><div class="mn-val serif">116</div></div>
+        <div class="mn-row"><div class="mn-nm">יאיר גולן</div><div class="mn-track"><div class="mn-fill" style="width:38.8%"></div></div><div class="mn-val serif">45</div></div>
+        <div class="mn-row"><div class="mn-nm">בצלאל סמוטריץ'</div><div class="mn-track"><div class="mn-fill" style="width:20.7%"></div></div><div class="mn-val serif">24</div></div>
+        <div class="mn-row"><div class="mn-nm">איתמר בן גביר</div><div class="mn-track"><div class="mn-fill" style="width:15.5%"></div></div><div class="mn-val serif">18</div></div>
+        <div class="mn-row"><div class="mn-nm">נפתלי בנט</div><div class="mn-track"><div class="mn-fill" style="width:12.1%"></div></div><div class="mn-val serif">14</div></div>
+      </div>
+      <p class="fig-note">איור 3 — מספר הפעמים שכל דמות אוזכרה בציוצי האחרים (בתגית ובשם).</p>
+
+      <div class="exhibit">
+        <div class="ex-h">
+          <img class="ex-ava" src="netanyahu.jpg" alt="">
+          <div><div class="ex-nm">בנימין נתניהו</div><div class="ex-hd">הציוץ הנצפה ביותר בקמפיין</div></div>
+        </div>
+        <div class="ex-txt serif">"נפגש כעת בבית הלבן עם ידידי, נשיא ארה״ב דונלד טראמפ."</div>
+        <div class="ex-meta">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10-9.2C.6 9 1.6 5.7 4.6 5c2-.5 3.7.6 4.4 2 .7-1.4 2.4-2.5 4.4-2 3 .7 4 4 2.6 6.8C19.5 16.3 12 21 12 21z"/></svg>
+          <span class="en">64,102</span> לייקים · <span class="en">2,341,905</span> צפיות · 28 ביולי
+        </div>
+      </div>
+    </div>
+
+    <!-- §4 butterfly -->
+    <div class="sec">
+      <div class="label">התקפה או תוכנית</div>
+      <h2 class="sh serif">מי מאשים, ומי מבטיח</h2>
+      <p class="sub">אחוז הציוצים עם שפת האשמה (שקר, כישלון, בושה) מול שפת הבטחה (נקדם, נבנה, תוכנית). גולן תוקף הכי הרבה; נתניהו כמעט לא.</p>
+      <div class="bf-head"><span class="a">◀ התקפה</span><span class="p">תוכנית ▶</span></div>
+      <sc-for list="{{bf}}" as="r" hint-placeholder-count="10">
+        <div class="bf-row">
+          <div class="bf-nm">{{r.name}}</div>
+          <div class="bf-bars">
+            <div class="bf-half bf-l" style="flex:1">
+              <span class="bf-lab">{{r.ap}}</span>
+              <div class="bf-seg" style="width: {{r.aw}}%; background:#b0553c; border-radius:2px 0 0 2px"></div>
+            </div>
+            <div class="bf-mid"></div>
+            <div class="bf-half" style="flex:1">
+              <div class="bf-seg" style="width: {{r.pw}}%; background:#2f6d80; border-radius:0 2px 2px 0"></div>
+              <span class="bf-lab">{{r.pp}}</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      <p class="fig-note">איור 4 — שני מדדים לקסיקליים על פני הציוצים העצמיים. אחוזים מסך הציוצים.</p>
+    </div>
+
+    <div class="method">
+      <h3>איך נמדד</h3>
+      <p>נאספו כלל הציוצים הפומביים של עשרה ראשי מפלגות מ־17.7 ועד 1.9.2026. ריטוויטים הוצאו ממדדי הטקסט (הם מילים של אחר). העברית עברה לממטיזציה במודל stanza — כך «החטופים», «לחטופים» ו«ולחטופים» נספרים כמילה אחת. «מילת טביעת האצבע» מבוססת על מבחן log-likelihood (G²) המשווה תדירות מול שאר המאגר. המספרים מתארים תדירות מילים — לא צדקת הדובר; אירוניה, ציטוט יריב והכחשה נספרים כשימוש. המדגם מוטה לטובת מי שפעיל ב־X.</p>
+    </div>
+
+    <div class="colophon">מפת שפה · כנסת 2026 · הקוד והמתודולוגיה זמינים לציבור</div>
+
+  </div>
+</div>
+
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":800,"height":4200}}'>
+class Component extends DCLogic {
+  constructor(props){ super(props); this.state = { metric: "per_day" }; }
+  data(){
+    return [
+      {id:"bennett",   name:"נפתלי בנט",     party:"ביחד",            per_day:3.98, attack:0.152, program:0.196, we:227, they:174},
+      {id:"lieberman", name:"אביגדור ליברמן", party:"ישראל ביתנו",     per_day:3.79, attack:0.252, program:0.114, we:74,  they:114},
+      {id:"smotrich",  name:"בצלאל סמוטריץ'", party:"הציונות הדתית",   per_day:3.17, attack:0.051, program:0.226, we:103, they:85},
+      {id:"golan",     name:"יאיר גולן",     party:"הדמוקרטים",        per_day:2.85, attack:0.307, program:0.284, we:302, they:180},
+      {id:"netanyahu", name:"בנימין נתניהו", party:"הליכוד",           per_day:2.21, attack:0.022, program:0.043, we:63,  they:43},
+      {id:"tibi",      name:"אחמד טיבי",     party:"הרשימה המשותפת",   per_day:2.13, attack:0.037, program:0.049, we:16,  they:22},
+      {id:"ben_gvir",  name:"איתמר בן גביר", party:"עוצמה יהודית",     per_day:1.94, attack:0.153, program:0.224, we:43,  they:99},
+      {id:"maoz",      name:"אבי מעוז",      party:"נעם",              per_day:1.66, attack:0.103, program:0.118, we:16,  they:44},
+      {id:"lapid",     name:"יאיר לפיד",     party:"ביחד / יש עתיד",    per_day:1.62, attack:0.145, program:0.101, we:128, they:129},
+      {id:"haskel",    name:"שרן השכל",      party:"ישראל ראשונה",     per_day:0.64, attack:0.120, program:0.200, we:20,  they:12},
+    ];
+  }
+  metrics(){ return [
+    {key:"per_day", label:"פעילות", color:"#2f6d80"},
+    {key:"attack",  label:"התקפה",  color:"#b0553c"},
+    {key:"program", label:"תוכנית", color:"#2f6d80"},
+    {key:"wt",      label:"«אנחנו» / «הם»", color:"#5f7449"},
+  ]; }
+  val(p,k){ return k==="wt" ? p.we/Math.max(1,p.they) : p[k]; }
+  fmt(v,k){ if(k==="per_day")return v.toFixed(1); if(k==="wt")return v.toFixed(1); return Math.round(v*100)+"%"; }
+  lri(s){ return "⁦"+s+"⁩"; }
+  renderVals(){
+    const k = this.state.metric;
+    const m = this.metrics().find(x=>x.key===k);
+    const rows = this.data().map(p=>({p,v:this.val(p,k)})).sort((a,b)=>b.v-a.v);
+    const max = Math.max.apply(null, rows.map(r=>r.v)) || 1;
+    const items = rows.map((r,i)=>({
+      rank:i+1, name:r.p.name, party:r.p.party, photo:r.p.id+".jpg",
+      val:this.lri(this.fmt(r.v,k)), w:Math.max(3, r.v/max*100), color:m.color,
+    }));
+    const btns = this.metrics().map(x=>({
+      label:x.label, cls:"seg-b"+(x.key===k?" on":""),
+      pick:()=>this.setState({metric:x.key}),
+    }));
+    const desc = {
+      per_day:"ציוצים ליום בחלון הקמפיין (כלל הציוצים חלקי מספר הימים).",
+      attack:"אחוז הציוצים העצמיים הנושאים שפת האשמה: שקר, כישלון, בושה.",
+      program:"אחוז הציוצים העצמיים הנושאים שפת הבטחה: נקדם, נבנה, תוכנית.",
+      wt:"יחס כינויי «אנחנו» ל«הם». גבוה = שפת ליכוד; נמוך = שפת עימות.",
+    }[k];
+    const bfRows = this.data().slice().sort((a,b)=>(b.attack+b.program)-(a.attack+a.program));
+    const bfMax = Math.max.apply(null, bfRows.flatMap(p=>[p.attack,p.program]).concat([0.3]));
+    const pctL = x=>this.lri(Math.round(x*100)+"%");
+    const bf = bfRows.map(p=>({
+      name:p.name, aw:p.attack/bfMax*100, pw:p.program/bfMax*100,
+      ap:pctL(p.attack), pp:pctL(p.program),
+    }));
+    return { btns, desc, items, bf };
+  }
+}
+</script>
+</body>
+</html>
