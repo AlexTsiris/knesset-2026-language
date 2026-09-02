@@ -247,6 +247,11 @@ details[open] summary::before{content:"▾ "}
   font-size:12.5px;line-height:1.45;padding:7px 11px;border-radius:4px;max-width:290px;
   box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .1s;font-variant-numeric:tabular-nums}
 #tip.on{opacity:1}
+/* тач-режим: подсказка пришвартована к низу экрана. У пальца она прыгала
+   (позиция считается от точки касания и отражается у краёв) и закрывала
+   ту самую строку, к которой относится. */
+#tip.dock{inset-inline:10px;inset-block:auto 12px;max-width:none;font-size:13px;
+  padding:10px 13px;box-shadow:0 -6px 22px rgba(0,0,0,.3)}
 .tip-lex{color:var(--muted);font-size:11.5px;display:block;margin-top:3px}
 .seg-desc .tip-lex,.sub .tip-lex{color:var(--ink2)}
 .loading{padding:90px 20px;text-align:center;color:var(--muted)}
@@ -283,7 +288,11 @@ const cleanTweet=t=>(t||'').replace(/https?:\/\/\S+/g,'')
   .replace(/\s+/g,' ').trim();
 
 const tip=$('#tip');
-function showTip(html,x,y){tip.innerHTML=html;tip.classList.add('on');
+let docked=false, dockedAt=0;
+function showTip(html,x,y,dock){
+  tip.innerHTML=html;tip.classList.add('on');
+  docked=!!dock; tip.classList.toggle('dock',docked);
+  if(docked){tip.style.left='';tip.style.top='';dockedAt=scrollY;return;}
   const r=tip.getBoundingClientRect();
   // по умолчанию слева-снизу от курсора; у краёв экрана отражаем
   let px=x-r.width-14,py=y+14;
@@ -293,24 +302,30 @@ function showTip(html,x,y){tip.innerHTML=html;tip.classList.add('on');
   tip.style.left=px+'px';tip.style.top=py+'px';}
 function hideTip(){tip.classList.remove('on');}
 
-// На тач-экране нет ни курсора, ни mouseleave: подсказка, показанная по
-// касанию, оставалась висеть и закрывала данные. Поэтому на тач-устройствах
-// любое следующее касание и любая прокрутка её гасят: касание по элементу
-// сначала проходит через гасящий обработчик на document (capture), а потом
-// уже показывает подсказку этого элемента.
-let touching=false;
+// Мышь и палец разведены по pointerType, а не по отдельным mouse/touch
+// обработчикам. Причина: после тапа браузер досылает совместимостные
+// mouse-события, и mouseleave с ПРЕДЫДУЩЕЙ строки гасил подсказку, только
+// что показанную для новой -- выглядело как «нажал, а она пропала».
+// Pointer-события такого дубля не создают: у касания pointerType='touch'.
 function hov(node,html){
-  node.addEventListener('mousemove',e=>{if(!touching)showTip(html,e.clientX,e.clientY);});
-  node.addEventListener('mouseleave',hideTip);
-  node.addEventListener('touchstart',e=>{const t=e.touches[0];if(!t)return;
-    touching=true; showTip(html,t.clientX,t.clientY);},{passive:true});
+  node.addEventListener('pointermove',e=>{
+    if(e.pointerType==='mouse')showTip(html,e.clientX,e.clientY);});
+  node.addEventListener('pointerleave',e=>{
+    if(e.pointerType==='mouse')hideTip();});
+  node.addEventListener('pointerdown',e=>{
+    if(e.pointerType!=='mouse')showTip(html,e.clientX,e.clientY,true);});
 }
-document.addEventListener('touchstart',hideTip,true);
-// флаг снимается через полсекунды после касания: иначе на ноутбуке с
-// тач-экраном одно касание навсегда отключило бы подсказки от мыши
-// (браузер досылает синтетический mousemove сразу после tap)
-addEventListener('touchend',()=>setTimeout(()=>{touching=false;},500),{passive:true});
-addEventListener('scroll',hideTip,{passive:true});
+// Касание мимо любой подсказки её гасит. Обработчик в фазе захвата, поэтому
+// при переходе с клетки на клетку сначала гаснет старая, затем показывается
+// новая -- без мигания и без залипания.
+document.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse')hideTip();},true);
+// Пришвартованную подсказку не гасим на каждый пиксель прокрутки: касание
+// пальцем почти всегда сдвигает страницу на пару пикселей, и подсказка
+// исчезала сразу после появления. Гасим, только когда читатель реально
+// ушёл с места -- или сразу, если подсказка привязана к курсору.
+addEventListener('scroll',()=>{if(!docked){hideTip();return;}
+  if(Math.abs(scrollY-dockedAt)>170)hideTip();},{passive:true});
 addEventListener('resize',hideTip);
 
 (function(){const KEY='knesset-theme';let t;try{t=localStorage.getItem(KEY)}catch(e){}
