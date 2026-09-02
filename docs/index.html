@@ -284,12 +284,34 @@ const cleanTweet=t=>(t||'').replace(/https?:\/\/\S+/g,'')
 
 const tip=$('#tip');
 function showTip(html,x,y){tip.innerHTML=html;tip.classList.add('on');
-  const r=tip.getBoundingClientRect();let px=x-r.width-14,py=y+14;
-  if(px<4)px=x+14; if(py+r.height>innerHeight)py=y-r.height-14;
+  const r=tip.getBoundingClientRect();
+  // по умолчанию слева-снизу от курсора; у краёв экрана отражаем
+  let px=x-r.width-14,py=y+14;
+  if(px<4)px=x+14;
+  if(px+r.width>innerWidth-4)px=Math.max(4,innerWidth-r.width-4);
+  if(py+r.height>innerHeight-4)py=Math.max(4,y-r.height-14);
   tip.style.left=px+'px';tip.style.top=py+'px';}
 function hideTip(){tip.classList.remove('on');}
-function hov(node,html){node.addEventListener('mousemove',e=>showTip(html,e.clientX,e.clientY));
-  node.addEventListener('mouseleave',hideTip);}
+
+// На тач-экране нет ни курсора, ни mouseleave: подсказка, показанная по
+// касанию, оставалась висеть и закрывала данные. Поэтому на тач-устройствах
+// любое следующее касание и любая прокрутка её гасят: касание по элементу
+// сначала проходит через гасящий обработчик на document (capture), а потом
+// уже показывает подсказку этого элемента.
+let touching=false;
+function hov(node,html){
+  node.addEventListener('mousemove',e=>{if(!touching)showTip(html,e.clientX,e.clientY);});
+  node.addEventListener('mouseleave',hideTip);
+  node.addEventListener('touchstart',e=>{const t=e.touches[0];if(!t)return;
+    touching=true; showTip(html,t.clientX,t.clientY);},{passive:true});
+}
+document.addEventListener('touchstart',hideTip,true);
+// флаг снимается через полсекунды после касания: иначе на ноутбуке с
+// тач-экраном одно касание навсегда отключило бы подсказки от мыши
+// (браузер досылает синтетический mousemove сразу после tap)
+addEventListener('touchend',()=>setTimeout(()=>{touching=false;},500),{passive:true});
+addEventListener('scroll',hideTip,{passive:true});
+addEventListener('resize',hideTip);
 
 (function(){const KEY='knesset-theme';let t;try{t=localStorage.getItem(KEY)}catch(e){}
   if(t)document.documentElement.setAttribute('data-theme',t);
