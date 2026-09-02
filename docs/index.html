@@ -137,6 +137,10 @@ h2.sh{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;
 
 /* heatmap */
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* врезка шире текстовой колонки: матрица 17x12 в 780px не влезает,
+   а горизонтальный скролл в ней читается плохо -- рвёт сравнение строк */
+.bleed{--bw:min(1260px,calc(100vw - 2*clamp(16px,5vw,40px)));
+  width:var(--bw);margin-inline:calc((100% - var(--bw))/2)}
 .hm{border-collapse:separate;border-spacing:0;width:100%;font-size:11.5px;min-width:560px}
 .hm th{color:var(--ink2);font-weight:600;font-size:11px;padding:0 3px 8px;
   vertical-align:bottom;text-align:center;white-space:nowrap}
@@ -203,7 +207,18 @@ h2.sh{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;
 .corpus-card h3{font-family:"Frank Ruhl Libre",serif;font-size:16px;font-weight:700;margin:0 0 10px}
 
 /* mentions extra list */
-.hm.mx{min-width:720px}
+.hm.mx{min-width:0;width:100%;font-size:11px;table-layout:fixed}
+.hm.mx td{padding:1.5px}
+.hm.mx th.hcol{font-size:10.5px;padding-inline:1px;word-break:keep-all}
+.hm.mx th.row{width:120px}
+.hm.mx .cell{height:26px;border-radius:2px}
+/* до 1200px подписи столбцов не влезают в равные доли -- сжимаем шрифт,
+   а не режем имена; ниже 900px честнее вернуть прокрутку */
+@media (max-width:1200px){.hm.mx{font-size:10.5px}
+  .hm.mx th.hcol{font-size:9.5px}.hm.mx th.row{width:102px;font-size:11px}
+  .hm.mx .cell{height:24px}}
+@media (max-width:900px){.hm.mx{min-width:780px;font-size:11.5px;table-layout:auto}
+  .hm.mx th.hcol{font-size:10.5px}.hm.mx th.row{width:auto;font-size:12px}}
 .hm.mx th.row{font-weight:600;font-size:12px}
 .cell.self{background:repeating-linear-gradient(45deg,transparent,transparent 3px,var(--rule2) 3px,var(--rule2) 4px);color:var(--muted)}
 .cell.tot{background:transparent;color:var(--ink2);font-weight:700;font-size:13px}
@@ -333,7 +348,7 @@ function hero(){
   );
   const tiles=el('div',{class:'stats'});
   [[sp(m.n_tweets),'ציוצים נותחו'],[m.n_politicians,'ראשי מפלגות'],
-   [m.days,'ימי קמפיין'],[sp(ntalk),'אזכורי נתניהו — פי 2.2 מהבא']].forEach(([v,k])=>
+   [m.days,'ימי קמפיין'],[sp(ntalk),'פעמים הזכירו האחרים את נתניהו — פי 2.2 מהבא אחריו']].forEach(([v,k])=>
     tiles.append(el('div',{class:'stat'},[el('div',{class:'n serif',html:''+v}),el('div',{class:'l',text:k})])));
   wrap.append(tiles);
   return wrap;
@@ -467,7 +482,10 @@ function gravity(){
   const sec=el('section',{class:'sec'});
   sec.append(el('div',{class:'label',text:'מרכז הכובד'}),
     el('h2',{class:'sh serif',text:'מי מאזכר את מי'}),
-    el('p',{class:'sub',text:'כל שורה — מי מאזכר; כל עמודה — את מי. תא = מספר הציוצים העצמיים שבהם המאזכר כתב את שמו או את תגיתו של האחר. ככל שהתא כהה יותר, כך יותר אזכורים. הטבלה נגללת הצידה →'}));
+    el('p',{class:'sub',html:'קוראים את הטבלה כך: <b>השורה</b> — מי כתב את הציוץ, <b>העמודה</b> — את מי הוא הזכיר בו. '+
+      'המספר בתא הוא מספר הציוצים שלו שבהם הופיע שמו או תגיתו של האחר — כהה יותר, אזכורים רבים יותר. '+
+      'למשל השורה של גולן והעמודה של נתניהו: 41 ציוצים שבהם גולן הזכיר את נתניהו. '+
+      'התא המשורטט באלכסון הוא המפגש של אדם עם עצמו — אזכור עצמי אינו נספר.'}));
   const ids=D.politicians.map(p=>p.id);            // пишут сами -> строки
   const allIds=[...ids,...(D.silent||[]).map(p=>p.id)]; // + молчащие -> только столбцы
   const W={}; D.mentions.edges.forEach(e=>{(W[e.source]=W[e.source]||{})[e.target]=e.weight;});
@@ -514,7 +532,7 @@ function gravity(){
   cols.forEach(c=>totRow.append(el('td',{},[el('div',{class:'cell tot serif',text:inc(c)})])));
   totRow.append(el('td',{},[el('div',{class:'cell'})]));
   tb.append(totRow);
-  sec.append(el('div',{class:'scroll'},[tbl]),
+  sec.append(el('div',{class:'bleed'},[el('div',{class:'scroll'},[tbl])]),
     el('p',{class:'fig-note',html:'איור 4 — אזכור אינו התקפה: הטון אינו נמדד כאן, רק מי גורר את מי אל תוך השיחה. '+
       'הזיהוי לפי שם, כינוי מקובל ותגית (@). עמודות המסומנות ב־* הן פוליטיקאים ללא חשבון פעיל ב־X: '+
       'הם מאוזכרים אך אינם מצייצים, ולכן אין להם שורה. כך נכנסים לתמונה מנהיגי המפלגות החרדיות — '+
